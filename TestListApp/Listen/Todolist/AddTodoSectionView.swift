@@ -64,7 +64,7 @@ struct AddTodoSectionView: View {
                                 }
                             }
                         }
-                        if dateToggle == true {
+                        if dateToggle {
                             DatePicker("", selection: $date, displayedComponents: .date)
                                 .datePickerStyle(.graphical)
                             
@@ -82,7 +82,7 @@ struct AddTodoSectionView: View {
                                 }
                             }
                             
-                            if hoursToggle == true {
+                            if hoursToggle {
                                 DatePicker("", selection: $hour, displayedComponents: .hourAndMinute)
                                     .datePickerStyle(.wheel)
                             }

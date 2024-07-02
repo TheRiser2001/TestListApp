@@ -37,6 +37,7 @@
 		067FF5152BB2F92000269944 /* KalenderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 067FF5142BB2F92000269944 /* KalenderView.swift */; };
 		067FF5182BB3118F00269944 /* AnleitungenView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 067FF5172BB3118F00269944 /* AnleitungenView.swift */; };
 		067FF51B2BB3136B00269944 /* AusgabenView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 067FF51A2BB3136B00269944 /* AusgabenView.swift */; };
+		069416B42C259AD50016F45D /* WunschModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 069416B32C259AD50016F45D /* WunschModel.swift */; };
 		06C555DC2BD92ED1005E277B /* Class, enums, extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06C555DB2BD92ED1005E277B /* Class, enums, extensions.swift */; };
 		06C555DE2BD93856005E277B /* RezepteDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06C555DD2BD93856005E277B /* RezepteDetailView.swift */; };
 		06C9AF1D2B93798600646C45 /* Color+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06C9AF1C2B93798600646C45 /* Color+Extensions.swift */; };
@@ -77,6 +78,7 @@
 		067FF5142BB2F92000269944 /* KalenderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KalenderView.swift; sourceTree = "<group>"; };
 		067FF5172BB3118F00269944 /* AnleitungenView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnleitungenView.swift; sourceTree = "<group>"; };
 		067FF51A2BB3136B00269944 /* AusgabenView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AusgabenView.swift; sourceTree = "<group>"; };
+		069416B32C259AD50016F45D /* WunschModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WunschModel.swift; sourceTree = "<group>"; };
 		06C555DB2BD92ED1005E277B /* Class, enums, extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Class, enums, extensions.swift"; sourceTree = "<group>"; };
 		06C555DD2BD93856005E277B /* RezepteDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RezepteDetailView.swift; sourceTree = "<group>"; };
 		06C9AF1C2B93798600646C45 /* Color+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Color+Extensions.swift"; sourceTree = "<group>"; };
@@ -215,6 +217,7 @@
 			isa = PBXGroup;
 			children = (
 				067FF5112BB2EEFA00269944 /* WunschlisteView.swift */,
+				069416B32C259AD50016F45D /* WunschModel.swift */,
 				0650DBD02BC0475B001089BF /* AddWunschSheetView.swift */,
 				06E6586F2BC6D75700F05AC5 /* EditWunschSheetView.swift */,
 			);
@@ -353,6 +356,7 @@
 				060CA4E62B6D1C7100F88620 /* Einkaufsliste.swift in Sources */,
 				060CA4D02B6D1B5A00F88620 /* TestListAppApp.swift in Sources */,
 				062C68EA2B6EAD3000774BF1 /* DatabaseMigrationPlan.swift in Sources */,
+				069416B42C259AD50016F45D /* WunschModel.swift in Sources */,
 				065A25782BB1C308004894D2 /* Todolist.swift in Sources */,
 				066B0C882BB593C100CC1A4C /* AddItemButton.swift in Sources */,
 				06518ABB2BCEA8000072C0E3 /* AddTodoSectionView.swift in Sources */,
