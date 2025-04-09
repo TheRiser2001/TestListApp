@@ -71,20 +71,25 @@ struct GeschenkeView: View {
         NavigationStack {
             ScrollView {
                 VStack {
-                    LazyVGrid(columns: Array(repeating: GridItem(), count: 2), content: {
+                    LazyVGrid(columns: Array(repeating: GridItem(), count: 2)) {
                         ForEach(personen) { person in
-                            RectangleView(person: person, personen: $personen)
+                            RectangleView(person: person,
+                                          deletePerson: {
+                                if let index = personen.firstIndex(where: { $0.id == person.id }) {
+                                    personen.remove(at: index)
+                                }
+                            })
                         }
-                    })
+                    }
                     .padding(15)
                 }
                 .navigationTitle("Geschenke")
                 .toolbar {
                     ToolbarItem(placement: .topBarTrailing) {
-                        Button(action: {
+                        Button {
                             let newPerson = GeschenkPerson(name: "Test", items: [GeschenkItem(name: "Test", status: .ueberlegung, preis: 0, showDate: false, date: Date.now)])
                             personen.append(newPerson)
-                        }) {
+                        } label: {
                             Image(systemName: "plus.circle")
                         }
                     }
@@ -100,7 +105,7 @@ struct GeschenkeView: View {
 struct RectangleView: View {
     
     @ObservedObject var person: GeschenkPerson
-    @Binding var personen: [GeschenkPerson]
+    var deletePerson: () -> Void
     
     var body: some View {
         ZStack(alignment: .top) {
@@ -114,7 +119,7 @@ struct RectangleView: View {
                         .bold()
                     
                     NavigationLink {
-                        GeschenkeDetailView(person: person, personen: $personen, items: $person.items)
+                        GeschenkeDetailView( person: person, deletePerson: deletePerson)
                     } label: {
                         Image(systemName: "info.circle")
                     }
@@ -151,20 +156,13 @@ struct RectangleView: View {
 struct GeschenkeDetailView: View {
     @Environment(\.dismiss) var dismiss
     
-    @State private var anzahlItems: Int = 0
-    
-    @State private var showArrivedAlert: Bool = false
-    @State private var showDeleteAlert: Bool = false
     @State private var deletePersonAlert: Bool = false
     @State private var arrivedProducts: Bool = false
-    @State private var newDate: Date = Date()
+    @State private var showArrivedAlert: Bool = false
+    @State private var showDeleteAlert: Bool = false
     
     @ObservedObject var person: GeschenkPerson
-    @Binding var personen: [GeschenkPerson]
-    @Binding var items: [GeschenkItem]
-    
-    @State private var itemToDelete: GeschenkItem?
-    @State private var itemToUpdate: GeschenkItem?
+    var deletePerson: () -> Void
     
     var body: some View {
         Form {
@@ -173,77 +171,9 @@ struct GeschenkeDetailView: View {
                     .bold()
             }
             
-            ForEach(items.indices, id: \.self) { index in
-                let item = items[index]
-                
-                Section("Produkt \(anzahlItems + index + 1)") {
-                    
-                    HStack {
-                        Text("Produkt:")
-                        Spacer()
-                        TextField("Produktname", text: $items[index].name)
-                            .frame(width: 200)
-                            .multilineTextAlignment(.trailing)
-                    }
-                    
-                    Picker("Status:", selection: $items[index].status) {
-                        ForEach(Status.allCases, id: \.self) { status in
-                            Text(status.asString).tag(status)
-                        }
-                    }
-                    .pickerStyle(.menu)
-                    .accentColor(item.status.color)
-                    
-                    HStack {
-                        Text("Preis:")
-                        Spacer()
-                        TextField("0", value: $items[index].preis, formatter: NumberFormatter())
-                            .multilineTextAlignment(.trailing)
-                            .keyboardType(.numberPad)
-                        Text("€")
-                    }
-                    
-                    HStack {
-                        Toggle("Zieldatum", isOn: $items[index].showDate)
-                    }
-                    
-                    if items[index].showDate {
-                        DatePicker("Bis wann?", selection: $items[index].date, displayedComponents: .date)
-                    }
-                    
-                    LazyVGrid(columns: [GridItem(), GridItem()]) {
-                        Button(action: {
-                            showArrivedAlert = true
-                        }, label: {
-                            Text("Produkt angekommen")
-                                .multilineTextAlignment(.center)
-                                .foregroundStyle(.green)
-                        })
-                        .buttonStyle(BorderlessButtonStyle())
-                        
-                        Button(action: {
-                            itemToDelete = item
-                            showDeleteAlert = true
-                        }, label: {
-                            Text("Produkt löschen")
-                                .multilineTextAlignment(.center)
-                                .foregroundStyle(.red)
-                        })
-                        .buttonStyle(BorderlessButtonStyle())
-                        
-                    }
-                }
-            }
+            GeschenkItemRow(person: person)
             
             Section {
-                
-//                Button("Produkt hinzufügen") {
-//                    let newItem = GeschenkItem(name: "Testitem", status: .ueberlegung, preis: 10)
-//                    withAnimation {
-//                        items.append(newItem)
-//                    }
-//                }
-                
                 Button("Angekommene Produkte") {
                     arrivedProducts.toggle()
                 }
@@ -259,15 +189,16 @@ struct GeschenkeDetailView: View {
                 .presentationDetents([.fraction(0.5)])
         }
         
-        .alert("Produkt angekommen?", isPresented: $showArrivedAlert) { showArrivedProducts() } message: {
+        .alert("Produkt angekommen?", isPresented: $showArrivedAlert) {
+            showArrivedProductsButton()
+        } message: {
             Text("Sie können diese Produkte jederzeit erneut einsehen und wiederherstellen.")
         }
         
         .alert("Produkt löschen?", isPresented: $showDeleteAlert) {
             Button("Löschen", role: .destructive) {
-                deleteProduct()
+//                deleteProduct()
             }
-            
         } message: {
             Text("Bist du dir sicher das du dieses Produkt löschen möchtest?")
         }
@@ -284,9 +215,9 @@ struct GeschenkeDetailView: View {
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 Button {
-                    let newItem = GeschenkItem(name: "Testitem", status: .ueberlegung, preis: 10, showDate: false, date: Date.now)
+                    let newItem = GeschenkItem(name: "Neues Geschenk", status: .ueberlegung, preis: 10, showDate: false, date: Date.now)
                     withAnimation {
-                        items.append(newItem)
+                        person.items.append(newItem)
                     }
                 } label: {
                     Text("Produkt")
@@ -296,35 +227,93 @@ struct GeschenkeDetailView: View {
         }
     }
     
-    private func deletePerson() {
-        if let index = personen.firstIndex(where: { $0.id == person.id }) {
-            personen.remove(at: index)
-        }
-    }
-    
-    private func deleteProduct() {
-        if let itemToDelete = itemToDelete, let index = items.firstIndex(where: { $0.id == itemToDelete.id }) {
-            items.remove(at: index)
-        }
-    }
+//    private func deleteProduct() {
+//        if let itemToDelete = itemToDelete, let index = items.firstIndex(where: { $0.id == itemToDelete.id }) {
+//            items.remove(at: index)
+//        }
+//    }
     
     @ViewBuilder
-    private func showArrivedProducts() -> some View {
+    private func showArrivedProductsButton() -> some View {
         Button("Abbrechen", role: .cancel) {}
         
         Button {
-            // - Dieselbe Logik hinterlegen wie bei deleteProduct... mittels zwischenspeichern bei enr state variable und dann neuen status vergeben
+//            if let index = person.items.firstIndex(where: { $0.id == item.id}) {
+//                person.items[index].status = .besorgt
+//            }
         } label: {
             Text("Angekommen")
-                .bold()
         }
     }
 }
 
-struct EditItemRowView: View {
+struct GeschenkItemRow: View {
     
+    @State private var anzahlItems: Int = 0
+    
+    @ObservedObject var person: GeschenkPerson
+      
     var body: some View {
-        Text("Hi")
+        ForEach(person.items.indices, id: \.self) { index in
+            let item = person.items[index]
+            
+            Section("Produkt \(anzahlItems + index + 1)") {
+                
+                HStack {
+                    Text("Produkt:")
+                    Spacer()
+                    TextField("Produktname", text: $person.items[index].name)
+                        .frame(width: 200)
+                        .multilineTextAlignment(.trailing)
+                }
+                
+                Picker("Status:", selection: $person.items[index].status) {
+                    ForEach(Status.allCases, id: \.self) { status in
+                        Text(status.asString).tag(status)
+                    }
+                }
+                .pickerStyle(.menu)
+                .accentColor(item.status.color)
+                
+                HStack {
+                    Text("Preis:")
+                    Spacer()
+                    TextField("0", value: $person.items[index].preis, formatter: NumberFormatter())
+                        .multilineTextAlignment(.trailing)
+                        .keyboardType(.numberPad)
+                    Text("€")
+                }
+                
+                HStack {
+                    Toggle("Zieldatum", isOn: $person.items[index].showDate)
+                }
+                
+                if person.items[index].showDate {
+                    DatePicker("Bis wann?", selection: $person.items[index].date, displayedComponents: .date)
+                }
+                
+                LazyVGrid(columns: [GridItem(), GridItem()]) {
+                    Button {
+                        
+                    } label: {
+                        Text("Produkt angekommen")
+                            .multilineTextAlignment(.center)
+                            .foregroundStyle(.green)
+                    }
+                    .buttonStyle(BorderlessButtonStyle())
+                    
+                    Button(action: {
+                        
+                    }, label: {
+                        Text("Produkt löschen")
+                            .multilineTextAlignment(.center)
+                            .foregroundStyle(.red)
+                    })
+                    .buttonStyle(BorderlessButtonStyle())
+                    
+                }
+            }
+        }
     }
 }
 
@@ -367,59 +356,6 @@ struct ArrivedProducts: View {
         }
     }
 }
-
-//struct OldRectangleView: View {
-//
-//    @ObservedObject var person: GeschenkPerson
-//    @Binding var personen: [GeschenkPerson]
-//
-//    var body: some View {
-//        ZStack(alignment: .top) {
-//            RoundedRectangle(cornerRadius: 10.0)
-//                .stroke()
-//
-//            VStack {
-//                LazyVGrid(columns: [GridItem(alignment: .leading), GridItem(alignment: .trailing)]) {
-//
-//                    Text(person.name)
-//                        .bold()
-//
-//                    NavigationLink {
-//                        GeschenkeDetailView(person: person, personen: $personen, items: $person.items)
-//                    } label: {
-//                        Image(systemName: "info.circle")
-//                    }
-//                }
-//                .padding(.top)
-//                .padding(.horizontal, 8)
-//                Divider()
-//
-//                ForEach(person.items) { item in
-//                    HStack {
-//                        Text(item.name)
-//                            .foregroundStyle(item.status.color)
-//                        Spacer()
-//                    }
-//                    .padding(.horizontal, 8)
-//                    Divider()
-//                }
-//                Spacer()
-//                Button {
-//                    let newItem = GeschenkItem(name: "Testitem", status: .ueberlegung, preis: 10)
-//                    withAnimation {
-//                        person.items.append(newItem)
-//                    }
-//                } label: {
-//                    HStack {
-//                        Image(systemName: "plus")
-//                        Text("Hinzufügen")
-//                    }
-//                }
-//                .padding(.bottom)
-//            }
-//        }
-//    }
-//}
 
 #Preview {
     GeschenkeView(listInfo: ListInfo(listName: "", systemName: "cart", itemsName: "Irgendwas", backgroundColor: .blue, accentColor: .white))
