@@ -104,6 +104,6 @@ struct AusgabenView: View {
     }
 }
 
-#Preview {
-    AusgabenView(listInfo: ListInfo(listName: "", backgroundColor: .blue, accentColor: .blue))
-}
+//#Preview {
+//    AusgabenView(listInfo: ListInfo(listName: "", systemName: "cart", backgroundColor: .blue, accentColor: .blue))
+//}

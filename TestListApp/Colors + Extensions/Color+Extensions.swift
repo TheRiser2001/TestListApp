@@ -103,3 +103,14 @@ struct ColorPaletteView2: View {
         }
     }
 }
+
+
+//MARK: Extension Kalender
+
+extension Date {
+    
+    var startOfDay: Date {
+        Calendar.current.startOfDay(for: self)
+    }
+    
+}

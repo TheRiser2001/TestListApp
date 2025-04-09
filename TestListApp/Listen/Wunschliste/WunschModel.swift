@@ -55,11 +55,12 @@ struct WunschModel: Hashable {
     var kosten: Double
     var gespart: Double
     var notizen: String
+    var abgeschlossen: Bool
     
     var gaugeProzent: Double { (gespart/kosten) }
 //    var gaugeRing: Double
     
-    init(name: String, priority: Priority, date: Date, kosten: Double, gespart: Double = 0, notizen: String = "") {
+    init(name: String, priority: Priority, date: Date, kosten: Double, gespart: Double = 0, notizen: String = "", abgeschlossen: Bool = false) {
         self.id = .init()
         self.name = name
         self.priority = priority
@@ -67,6 +68,7 @@ struct WunschModel: Hashable {
         self.kosten = kosten
         self.gespart = gespart
         self.notizen = notizen
+        self.abgeschlossen = abgeschlossen
     }
 }
 

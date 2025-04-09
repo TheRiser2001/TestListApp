@@ -15,18 +15,19 @@ struct AddTodoSectionView: View {
     @Environment(\.dismiss) var dismiss
     @Environment(\.modelContext) var context
 
-    @State private var sectionTextField: String = ""
+    @State private var personnameTextField: String = ""
     @State private var todoTextField: String = ""
     @State private var notizenEditor: String = ""
     @State private var prioPicker: Priority = .niedrig
-    @State private var addAlert: Bool = false
     
+    @State private var addAlert: Bool = false
     @State private var dateToggle: Bool = false
     @State private var hoursToggle: Bool = false
+    
     @State private var date: Date = .now
     @State private var hour: Date = .now
     
-    let personen: [Person]
+    @Binding var personen: [NewPerson]
     
     private let hourFormatter: DateFormatter = {
         let formatter = DateFormatter()
@@ -46,7 +47,7 @@ struct AddTodoSectionView: View {
             VStack {
                 Form {
                     Section("Name") {
-                        TextField("", text: $sectionTextField, prompt: Text("Füge eine neue Person hinzu"))
+                        TextField("", text: $personnameTextField, prompt: Text("Füge eine neue Person hinzu"))
                     }
                     
                     Section("Todo hinzufügen") {
@@ -134,6 +135,11 @@ struct AddTodoSectionView: View {
                         addItem()
                     }
                 }
+                ToolbarItem(placement: .topBarLeading) {
+                    Button("Abbruch") {
+                        dismiss()
+                    }
+                }
             }
             
             .alert("Du hast den Namen vergessen", isPresented: $addAlert) {
@@ -145,28 +151,24 @@ struct AddTodoSectionView: View {
     }
     
     func addItem() {
-        let newTodo = TodolistItem(todoName: todoTextField, priority: prioPicker.asString)
-        let newItem = Person(name: sectionTextField, item: [newTodo])
+        let newTodo = NewTodoItem(todoName: todoTextField, priority: prioPicker, notiz: "", date: .now)
+        let newPerson = NewPerson(name: personnameTextField, items: [newTodo])
 //        MARK: Das guard ist dafür, dass ein Name eingetragen sein muss. Für Testzwecke auskommentiert
 //        guard sectionTextField != "" else {
 //            addAlert.toggle()
 //            return
 //        }
-        context.insert(newItem)
+        
+//        context.insert(newPerson)
+        personen.append(newPerson)
         dismiss()
     }
 }
 
 #Preview {
-    @State var personen: [Person] = [
-        Person(name: "Michi", item: [
-            TodolistItem(todoName: "Reifenwechsel", priority: "Niedrig"),
-            TodolistItem(todoName: "Büro gehen", priority: "Dringend!"),
-            TodolistItem(todoName: "Irgendwas", priority: "Mittel")
-        ].sorted { $0.priority < $1.priority }),
-        Person(name: "Tina", item: [
-            TodolistItem(todoName: "Haushalt", priority: "Dringend!")
-        ])
+    @State var personen: [NewPerson] = [
+        NewPerson(name: "Michi", items: [NewTodoItem(todoName: "Putzen", priority: .niedrig, notiz: "", date: .now)]),
+        NewPerson(name: "Tina", items: [NewTodoItem(todoName: "Essen machen", priority: .dringend, notiz: "", date: .now)])
     ]
-    return AddTodoSectionView(personen: personen)
+    return AddTodoSectionView(personen: $personen)
 }

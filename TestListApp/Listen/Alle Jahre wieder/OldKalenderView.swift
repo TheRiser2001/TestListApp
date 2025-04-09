@@ -7,25 +7,60 @@
 
 import SwiftUI
 
-class Ereignis: Identifiable {
-    let id = UUID()
-    let name: String
-//    let uhrzeit: Calendar.Component
+enum KategorieCalendar {
+    case privat
+    case arbeit
+    case geschenk
     
-    init(name: String /*, uhrzeit: Calendar.Component*/) {
-        self.name = name
-//        self.uhrzeit = uhrzeit
+    var asString: String {
+        "\(self)".capitalized
     }
 }
 
-struct KalenderView: View {
+enum WiederholungCalendar {
+    case taeglich
+    case woechentlich
+    case monatlich
+    case jaehrlich
+    
+    var asString: String {
+        switch self {
+        case .taeglich: return "täglich".capitalized
+        case .woechentlich: return "wöchentlich".capitalized
+        case .jaehrlich: return "jährlich".capitalized
+        default: return "\(self)".capitalized
+        }
+    }
+}
+
+class Ereignis: Identifiable {
+//    var date: Date
+    var startZeit: Date
+    var endZeit: Date
+    var ereignis: String
+    var kategorie: KategorieCalendar?
+    var wiederholung: WiederholungCalendar?
+    var color: Color
+    
+    init(startZeit: Date, endZeit: Date, ereignis: String, color: Color) {
+        self.startZeit = startZeit
+        self.endZeit = endZeit
+        self.ereignis = ereignis
+        self.color = color
+    }
+}
+
+struct OldKalenderView: View {
     
     @State private var date = Date()
     @State private var showSheet: Bool = false
     @State private var ereignisse: [Ereignis] = [
-        Ereignis(name: "Ian fetzen"),
-        Ereignis(name: "Ian ins Krankenhaus fahren")
+        Ereignis(startZeit: .now, endZeit: .now, ereignis: "Test", color: .red),
+        Ereignis(startZeit: .now, endZeit: .now, ereignis: "Tstet", color: .green)
     ]
+    
+//    @State private var selectedDay: Date?
+//    @State private var ereignisProTag: [Ereignis] = [Ereignis(date: .now, ereignis: "Test Ereignis", color: .green)]
     
     let listInfo: ListInfo
     
@@ -35,17 +70,29 @@ struct KalenderView: View {
                 DatePicker("", selection: $date, displayedComponents: .date)
                     .datePickerStyle(.graphical)
                 Divider()
-                Spacer()
                 
-                List {
-                    ForEach(ereignisse) { ereignis in
+                VStack(alignment: .leading) {
+                    Text("Ereignisse")
+                        .padding(.horizontal)
+                        .bold()
+                    List(ereignisse) { ereignis in
                         HStack {
-                            Text("20:45")
-                            Text(ereignis.name)
+                            Circle()
+                                .frame(width: 20)
+                                .foregroundStyle(ereignis.color)
+                            VStack(alignment: .leading) {
+                                Text(ereignis.ereignis)
+                                Text("\(ereignis.startZeit.formatted(date: .omitted, time: .shortened)) bis \(ereignis.endZeit.formatted(date: .omitted, time: .shortened))")
+                                    .foregroundStyle(.secondary)
+                            }
                         }
                     }
+                    .listStyle(.plain)
                 }
-                .listStyle(.plain)
+                
+//                if let selectedDay {
+//                    EreignisView(day: selectedDay, ereignis: ereignisProTag)
+//                }
                 
                 if ereignisse.isEmpty {
                     Text("Keine Einträge für diesen Tag vorhanden")
@@ -90,9 +137,9 @@ struct AddView: View {
     
     @State private var textFieldTitel: String = ""
     @State private var textFieldOrt: String = ""
+    @State private var textFieldText: String = ""
     @State private var kategorieName: String = "Geschenk"
     @State private var wiederhName: String = "Täglich"
-    @State private var textFieldText: String = ""
     
     @Binding var date: Date
     
@@ -102,8 +149,8 @@ struct AddView: View {
         NavigationStack {
             Form {
                 Section {
-                    TextField("", text: $textFieldOrt, prompt: Text("Ort des Ereignisses"))
                     TextField("", text: $textFieldTitel, prompt: Text("Titel des Ereignisses"))
+                    TextField("", text: $textFieldOrt, prompt: Text("Ort des Ereignisses"))
                 }
                 
                 Section {
@@ -173,10 +220,10 @@ struct AddView: View {
     }
 }
 
-#Preview {
-    KalenderView(listInfo: ListInfo(listName: "", backgroundColor: .blue, accentColor: .blue))
-}
-
-#Preview {
-    AddView(date: .constant(.now))
-}
+//#Preview {
+//    OldKalenderView(listInfo: ListInfo(listName: "Kalendae", systemName: "cart", backgroundColor: .yellow, accentColor: .black))
+//}
+//
+//#Preview {
+//    AddView(date: .constant(.now))
+//}

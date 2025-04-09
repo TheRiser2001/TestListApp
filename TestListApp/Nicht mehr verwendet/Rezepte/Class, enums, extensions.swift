@@ -6,20 +6,26 @@
 //
 
 import Foundation
+import SwiftUI
 import PhotosUI
 
 class Rezeptur: Identifiable {
     let id = UUID()
     let name: String
-    var tageszeit: Tageszeit
+    var anleitung: String
+    @Published var selectedImage: Image?
+    @Published var tageszeit: Tageszeit
+    @Published var ernaehrung: Ernährung
     let kcal: Int
     let kohlenhydrate: Int
     let proteine: Int
     let fette: Int
     
-    init(name: String, tageszeit: Tageszeit, kcal: Int, kohlenhydrate: Int, proteine: Int, fette: Int) {
+    init(name: String, anleitung: String = "", selectedImage: Image? = nil, tageszeit: Tageszeit, ernaehrung: Ernährung, kcal: Int, kohlenhydrate: Int, proteine: Int, fette: Int) {
         self.name = name
+        self.anleitung = anleitung
         self.tageszeit = tageszeit
+        self.ernaehrung = ernaehrung
         self.kcal = kcal
         self.kohlenhydrate = kohlenhydrate
         self.proteine = proteine

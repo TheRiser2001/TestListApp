@@ -8,59 +8,60 @@
 import SwiftUI
 import SwiftData
 
-////@Model
-//class Person: Identifiable, ObservableObject {
-//    let id = UUID()
-//    @Published var name: String
-//    @Published var item: [TodolistItem]
-//    
-//    init(name: String, item: [TodolistItem]) {
-//        self.name = name
-//        self.item = item
-//    }
-//}
-//
-//@Model
-//class TodolistItem: Identifiable, ObservableObject {
-//    let id = UUID()
-//    var todoName: String
-//    var priority: String
-//    
-//    init(todoName: String, priority: String) {
-//        self.todoName = todoName
-//        self.priority = priority
-//    }
-//}
+class NewPerson: Identifiable, ObservableObject {
+    let id = UUID()
+    @Published var name: String
+    @Published var items: [NewTodoItem]
+    
+    init(name: String, items: [NewTodoItem]) {
+        self.name = name
+        self.items = items
+    }
+}
+
+class NewTodoItem: Identifiable, ObservableObject {
+    
+    let id = UUID()
+    @Published var todoName: String
+    @Published var priority: Priority
+    @Published var notiz: String
+    @Published var date: Date
+    @Published var hour: Date
+    @Published var dateToggle: Bool
+    @Published var hourToggle: Bool
+    
+    init(todoName: String, priority: Priority, notiz: String, date: Date = .now, hour: Date = .now, dateToggle: Bool = false, hourToggle: Bool = false) {
+        self.todoName = todoName
+        self.priority = priority
+        self.notiz = notiz
+        self.date = date
+        self.hour = hour
+        self.dateToggle = dateToggle
+        self.hourToggle = hourToggle
+    }
+}
 
 struct Todolist: View {
     @Environment(\.modelContext) var context
-//    @State private var personen: [Person] = [
-//        Person(name: "Michi", item: [
-//            TodolistItem(todoName: "Reifenwechsel", priority: "Niedrig"),
-//            TodolistItem(todoName: "Büro gehen", priority: "Dringend!"),
-//            TodolistItem(todoName: "Irgendwas", priority: "Mittel")
-//        ].sorted { $0.priority < $1.priority }),
-//        Person(name: "Tina", item: [
-//            TodolistItem(todoName: "Haushalt", priority: "Dringend!")
-//        ])
-//    ]
-    @Query var personen: [Person]
+    @State private var personenTest: [NewPerson] = [
+        NewPerson(name: "Michi", items: [NewTodoItem(todoName: "Putzen", priority: .niedrig, notiz: "")]),
+        NewPerson(name: "Tina", items: [NewTodoItem(todoName: "Essen machen", priority: .dringend, notiz: "")])
+    ]
+//    @Query var personen: [Person]
     
-    @State private var priority: [Priority] = [.niedrig, .mittel, .hoch, .dringend]
     @State private var personIdWithoutItems: UUID?
     @State private var addSheet: Bool = false
     @State private var showAlert: Bool = false
     
-    let navTitle: String
     let listInfo: ListInfo
     
     var body: some View {
         
-        NavigationStack {
+//        NavigationStack {
             ZStack {
                 List {
-                    ForEach(personen.indices, id: \.self) { index in
-                        SectionRowView(personIdWithoutItems: $personIdWithoutItems, priority: priority, person: personen[index])
+                    ForEach(personenTest.indices, id: \.self) { index in
+                        SectionRowView(personIdWithoutItems: $personIdWithoutItems, person: personenTest[index])
                     }
                 }
                 .listStyle(.sidebar)
@@ -70,7 +71,7 @@ struct Todolist: View {
                     }
                 }
                 
-                if personen.isEmpty {
+                if personenTest.isEmpty {
                     EmptyStateView(sfSymbol: "star.fill", message: "Du hast alle deine Aufgaben erledigt.")
                 }
             }
@@ -79,25 +80,29 @@ struct Todolist: View {
                     personIdWithoutItems = nil
                 }
                 Button("Löschen", role: .destructive) {
-                    if let index = personen.firstIndex(where: { $0.id == personIdWithoutItems }) {
-//                        personen.remove(at: index)
-                        context.delete(personen[index])
+                    if let index = personenTest.firstIndex(where: { $0.id == personIdWithoutItems }) {
+                        personenTest.remove(at: index)
+//                        context.delete(personenTest[index])
                     }
                     personIdWithoutItems = nil
                 }
             } message: {
                 Text("Alle Aufgaben wurden erledigt. Möchtest du die Person aus der Lsite entfernen?")
             }
-        }
-        .navigationTitle(navTitle)
-        .navigationBarItems(trailing:
-                                Button(action: { addSheet.toggle() }, label: {
-            Image(systemName: "plus.circle")
-        })
-        )
+            .navigationTitle("Todos")
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button {
+                        addSheet.toggle()
+                    } label: {
+                        Image(systemName: "plus.circle")
+                    }
+                }
+            }
+//        }
         
         .sheet(isPresented: $addSheet) {
-            AddTodoSectionView(personen: personen)
+            AddTodoSectionView(personen: $personenTest)
 //                .presentationDetents([.fraction(0.6)])
         }
         
@@ -107,35 +112,32 @@ struct Todolist: View {
 }
 
 struct SectionRowView: View {
-    @Environment (\.modelContext) var context
+    
+    @Environment(\.modelContext) var context
     
     @State private var isExpanded: Bool = true
     
     @Binding var personIdWithoutItems: UUID?
-    let priority: [Priority]
     
-    @ObservedObject var person: Person
+    @ObservedObject var person: NewPerson
     
     var body: some View {
         
         Section(isExpanded: $isExpanded) {
-            ForEach(person.item) { item in
-                HStack {
-                    TodoRowView(item: item, person: person, priority: priority)
-                }
+            ForEach(person.items, id: \.id) { item in
+                TodoRowView(item: item, person: person)
             }
             .onDelete { offSet in
-                person.item.remove(atOffsets: offSet)
-                if person.item.isEmpty {
+                person.items.remove(atOffsets: offSet)
+                if person.items.isEmpty {
                     personIdWithoutItems = person.id
                 }
             }
             
             Button {
-                let newItem = TodolistItem(todoName: "", priority: "Niedrig")
+                let newItem = NewTodoItem(todoName: "", priority: .niedrig, notiz: "", date: .now)
                 withAnimation {
-//                    context.insert(newItem)
-                    person.item.append(newItem)
+                    person.items.append(newItem)
                 }
             } label: {
                 HStack {
@@ -144,10 +146,7 @@ struct SectionRowView: View {
                 }
                 .foregroundStyle(.blue)
             }
-            
-        } header: {
-            Text(person.name)
-        }
+        } header: { Text(person.name) }
     }
 }
 
@@ -157,79 +156,77 @@ struct TodoRowView: View {
     
     @State private var editSheet: Bool = false
     
-    @ObservedObject var item: TodolistItem
-    @ObservedObject var person: Person
-    
-    let priority: [Priority]
+    @ObservedObject var item: NewTodoItem
+    @ObservedObject var person: NewPerson
     
     var body: some View {
         VStack {
             HStack {
-                Button(action: {
+                Button{
                     guard item.todoName != "" else { return }
                     withAnimation {
                         isDone.toggle()
                     }
-                }, label: {
+                } label: {
                     Image(systemName: isDone ? "checkmark.circle.fill" : "checkmark.circle")
                         .foregroundStyle(isDone ? .green : .red)
-                })
+                }
                 
                 TextField("Todo eintragen", text: $item.todoName)
                     .strikethrough(isDone ? true : false)
                     .foregroundStyle(isDone ? Color.gray.opacity(0.7) : Color.primary)
                 Spacer()
                 
-//                Menu(item.priority) {
-//                    ForEach(Priority.allCases, id: \.self) { prio in
-//                        Button(prio.asString) {
-//                            item.priority = prio.asString
-//                        }
-//                    }
-//                }
-//                .foregroundStyle(priority.color)
+                Menu(item.priority.asString) {
+                    ForEach(Priority.allCases, id: \.self) { prio in
+                        Button(prio.asString) {
+//                            item.priority.asString = prio.asString
+                        }
+                    }
+                }
+                .foregroundStyle(item.priority.color)
                 
 
-                if item.priority == "Niedrig" {
-                    Menu(item.priority) { 
-                        ForEach(priority, id: \.self) { prio in
-                            Button(prio.asString) {
-                                item.priority = prio.asString
-                            }
-                        }
-                    }
-                    .foregroundStyle(.green)
-                    
-                } else if item.priority == "Mittel" {
-                    Menu(item.priority) {
-                        ForEach(priority, id: \.self) { prio in
-                            Button(prio.asString) {
-                                item.priority = prio.asString
-                            }
-                        }
-                    }
-                    .foregroundStyle(.blue)
-                    
-                } else if item.priority == "Hoch" {
-                    Menu(item.priority) {
-                        ForEach(priority, id: \.self) { prio in
-                            Button(prio.asString) {
-                                item.priority = prio.asString
-                            }
-                        }
-                    }
-                    .foregroundStyle(.orange)
-                    
-                } else if item.priority == "Dringend" {
-                    Menu(item.priority) {
-                        ForEach(priority, id: \.self) { prio in
-                            Button(prio.asString) {
-                                item.priority = prio.asString
-                            }
-                        }
-                    }
-                    .foregroundStyle(.red)
-                }
+//                if item.priority == .niedrig {
+//                    Menu(item.priority) { priority in
+//                        ForEach(priority, id: \.self) { prio in
+//                            Button(prio.asString) {
+//                                item.priority = prio.asString
+//                            }
+//                        }
+//                    }
+//                    .foregroundStyle(.green)
+//                    
+//                } else if item.priority == .mittel {
+//                    Menu(item.priority) { priority in
+//                        ForEach(priority, id: \.self) { prio in
+//                            Button(prio.asString) {
+//                                item.priority = prio.asString
+//                            }
+//                        }
+//                    }
+//                    .foregroundStyle(.blue)
+//                    
+//                } else if item.priority == .hoch {
+//                    Menu(item.priority) { priority in
+//                        ForEach(priority, id: \.self) { prio in
+//                            Button(prio.asString) {
+//                                item.priority = prio.asString
+//                            }
+//                        }
+//                    }
+//                    .foregroundStyle(.orange)
+//                    
+//                } else if item.priority == .dringend {
+//                    Menu(item.priority) { priority in
+//                        ForEach(priority, id: \.self) { prio in
+//                            Button(prio.asString) {
+//                                item.priority = prio.asString
+//                            }
+//                        }
+//                    }
+//                    .foregroundStyle(.red)
+//                }
                 
                 Button { editSheet.toggle() } label: {
                     Image(systemName: "info.circle")
@@ -241,11 +238,13 @@ struct TodoRowView: View {
         }
         
         .sheet(isPresented: $editSheet) {
-            EditTodoView(person: person/*, priority: $item.priority*/, item: item, todoName: $item.todoName)
+            EditTodoView(person: person/*, priority: $item.priority*/, item: item)
         }
     }
 }
 
-#Preview {
-    Todolist(navTitle: "Todoliste", listInfo: ListInfo(listName: "", backgroundColor: .blue, accentColor: .white))
-}
+//#Preview {
+//    NavigationStack {
+//        Todolist(listInfo: ListInfo(listName: "", systemName: "cart", backgroundColor: .blue, accentColor: .white))
+//    }
+//}

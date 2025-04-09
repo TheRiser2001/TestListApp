@@ -30,43 +30,69 @@ struct WunschlisteView: View {
     @State private var filterSelected: Bool = false
     @State private var selectedFilter: String = ""
     
+    @State private var expandOpen: Bool = true
     @State private var expandDone: Bool = false
     
     let listInfo: ListInfo
     
     var body: some View {
-        NavigationStack {
             ZStack {
-                List {
-                    Section("Offene wünsche") {
-                        ForEach(wunschListe, id: \.id) { wunsch in
-                            NavigationLink(value: wunsch) {
-                                WunschItemRow(wunsch: wunsch)
-                            }
-                        }
-                        .onDelete { offSet in
-                            wuensche.remove(atOffsets: offSet)
-                        }
-                    }
-                    Section(isExpanded: $expandDone) {
-                        ForEach(wunschListe, id: \.id) { wunsch in
-                            NavigationLink(value: wunsch) {
-                                WunschItemRow(wunsch: wunsch)
-                            }
-                        }
-                    } header: { Text("Abgeschlossene Wünsche") }
-                }
-                .background(Color(UIColor.systemGroupedBackground))
-                .listStyle(.sidebar)
-                
                 if wuensche.isEmpty {
                     EmptyStateView(sfSymbol: "star.fill", message: "Du hast im Moment keine Wünsche.\n Füge welche hinzu und verwirkliche deine Träume!")
+                } else {
+                    List {
+                        Section(isExpanded: $expandOpen) {
+                            ForEach(wunschListe, id: \.id) { wunsch in
+                                if !wunsch.abgeschlossen {
+                                    NavigationLink(value: wunsch) {
+                                        WunschItemRow(wunsch: wunsch)
+                                    }
+                                }
+                                // MARK: Funktioniert nicht, soll eine view sein wenn keine abgeschlossenen wünsche vorhanden sind
+                                if wunsch.abgeschlossen.description.count <= 1 {
+                                    HStack {
+                                        VStack(alignment: .leading) {
+                                            Text("Keine offenen Wünsche")
+                                                .font(.headline)
+                                                .padding(.bottom)
+                                            Text("0 € angespart")
+                                                .font(.subheadline)
+                                        }
+                                        .padding(.horizontal)
+                                        Spacer()
+                                        
+                                        Gauge(value: 0) {
+                                            Text("0%")
+                                        }
+                                        .gaugeStyle(.accessoryCircularCapacity)
+                                        .tint(.black)
+                                    }
+                                }
+                            }
+                            .onDelete { offSet in
+                                wuensche.remove(atOffsets: offSet)
+                            }
+                        } header: { Text("Offene Wünsche") }
+                        
+                        Section(isExpanded: $expandDone) {
+                            ForEach(wunschListe, id: \.id) { wunsch in
+                                if wunsch.abgeschlossen {
+                                    NavigationLink(value: wunsch) {
+                                        WunschItemRow(wunsch: wunsch)
+                                    }
+                                }
+                            }
+                        } header: { Text("Abgeschlossene Wünsche") }
+                        
+                    }
+                    .background(Color(UIColor.systemGroupedBackground))
+                    .listStyle(.sidebar)
                 }
             }
-            .navigationTitle("Wunschliste")
+            .navigationTitle("Wünsche")
             .navigationDestination(for: WunschModel.self) { wunsch in
-                if let edit = $wuensche.first(where: { $0.id.wrappedValue == wunsch.id })?.projectedValue {
-                    EditWunschSheetView(wunsch: edit)
+                if let edit = $wuensche.first(where: { $0.id.wrappedValue == wunsch.id }) {
+                    EditWunschSheetView(wunsch: edit, wuensche: $wuensche)
                 }
             }
             
@@ -91,7 +117,6 @@ struct WunschlisteView: View {
             
             .toolbarBackground(listInfo.backgroundColor.opacity(0.6))
             .toolbarBackground(.visible, for: .navigationBar)
-        }
     }
     
     @ViewBuilder
@@ -137,7 +162,6 @@ struct WunschlisteView: View {
             Image(systemName: "line.3.horizontal.decrease.circle")
         }
     }
-    
 }
 
 struct WunschItemRow: View {
@@ -145,20 +169,19 @@ struct WunschItemRow: View {
     let wunsch: WunschModel
     
     var body: some View {
-        HStack {
+        HStack(spacing: 20) {
             RoundedRectangle(cornerRadius: 10)
                 .frame(width: 5)
                 .frame(maxHeight: .infinity)
                 .foregroundStyle(wunsch.priority.color)
             
-            VStack(alignment: .leading) {
+            VStack(alignment: .leading, spacing: 20) {
                 Text(wunsch.name)
                     .font(.headline)
-                    .padding(.bottom)
                 Text("\(String(format: "%.0f", wunsch.gespart))€ angespart")
                     .font(.subheadline)
             }
-            .padding(.horizontal)
+            
             Spacer()
             
             Gauge(value: wunsch.gaugeProzent) {
@@ -171,5 +194,7 @@ struct WunschItemRow: View {
 }
 
 #Preview {
-    WunschlisteView(listInfo: ListInfo(listName: "", backgroundColor: .blue, accentColor: .white))
+    NavigationStack {
+        WunschlisteView(listInfo: ListInfo(listName: "", systemName: "cart", itemsName: "Test", backgroundColor: .blue, accentColor: .white))
+    }
 }

@@ -15,19 +15,8 @@ struct EditTodoView: View {
     
     @Environment(\.dismiss) var dismiss
     
-    @ObservedObject var person: Person
-    @ObservedObject var item: TodolistItem
-    
-    @State private var sectionTextField: String = ""
-    @State private var notizenEditor: String = ""
-    @State private var priority: Priority = .niedrig
-    
-    @State private var dateToggle: Bool = false
-    @State private var hoursToggle: Bool = false
-    @State private var date: Date = .now
-    @State private var hour: Date = .now
-    
-    @Binding var todoName: String
+    @ObservedObject var person: NewPerson
+    @ObservedObject var item: NewTodoItem
     
     private let hourFormatter: DateFormatter = {
         let formatter = DateFormatter()
@@ -45,51 +34,69 @@ struct EditTodoView: View {
         NavigationStack {
             Form {
                 Section("Name") {
-                    TextField("", text: $sectionTextField, prompt: Text("Name der Person"))
+                    TextField("", text: $person.name, prompt: Text("Name der Person"))
                 }
                 
+//                Section("Todo") {
+//                    TextField("", text: $item.todoName, prompt: Text("Füge ein Todo hinzu"))
+//                    Toggle(isOn: $item.dateToggle.animation()) {
+//                        HStack {
+//                            Image(systemName: "calendar")
+//                            VStack {
+//                                Text("Datum")
+//                                    .bold()
+//                                if item.dateToggle {
+//                                    Text(dateFormatter.string(from: item.date))
+//                                        .font(.footnote)
+//                                }
+//                            }
+//                        }
+//                    }
+//                    
+//                }
+                
                 Section("Todo") {
-                    TextField("", text: $todoName, prompt: Text("Füge ein Todo hinzu"))
-                    Toggle(isOn: $dateToggle.animation()) {
-                        HStack {
-                            Image(systemName: "calendar")
-                            VStack(alignment: .leading) {
-                                Text("Datum")
-                                    .bold()
-                                if dateToggle {
-                                    Text(dateFormatter.string(from: date))
-                                        .font(.footnote)
-                                }
-                            }
-                        }
-                    }
-                    if dateToggle == true {
-                        DatePicker("", selection: $date, displayedComponents: .date)
-                            .datePickerStyle(.graphical)
-                        
-                        HStack {
-                            Image(systemName: "clock")
-                            Toggle(isOn: $hoursToggle.animation()) {
+                        TextField("", text: $item.todoName, prompt: Text("Füge ein Todo hinzu"))
+                        Toggle(isOn: $item.dateToggle.animation()) {
+                            HStack {
+                                Image(systemName: "calendar")
                                 VStack(alignment: .leading) {
-                                    Text("Uhrzeit")
+                                    Text("Datum")
                                         .bold()
-                                    if hoursToggle {
-                                        Text(hourFormatter.string(from: hour))
+                                    if item.dateToggle {
+                                        Text(dateFormatter.string(from: item.date))
                                             .font(.footnote)
                                     }
                                 }
                             }
                         }
-                        
-                        if hoursToggle == true {
-                            DatePicker("", selection: $hour, displayedComponents: .hourAndMinute)
-                                .datePickerStyle(.wheel)
+                        if item.dateToggle {
+                            DatePicker("", selection: $item.date, displayedComponents: .date)
+                                .datePickerStyle(.graphical)
+                            
+                            HStack {
+                                Image(systemName: "clock")
+                                Toggle(isOn: $item.hourToggle.animation()) {
+                                    VStack(alignment: .leading) {
+                                        Text("Uhrzeit")
+                                            .bold()
+                                        if item.hourToggle {
+                                            Text(hourFormatter.string(from: item.hour))
+                                                .font(.footnote)
+                                        }
+                                    }
+                                }
+                            }
+                            
+                            if item.hourToggle {
+                                DatePicker("", selection: $item.hour, displayedComponents: .hourAndMinute)
+                                    .datePickerStyle(.wheel)
+                            }
                         }
-                    }
                 }
                 
                 Section("Priority") {
-                    Picker("", selection: $priority) {
+                    Picker("", selection: $item.priority) {
                         ForEach(Priority.allCases, id: \.self) { priority in
                             Text(priority.asString)
                         }
@@ -106,25 +113,34 @@ struct EditTodoView: View {
                     }
                     .overlay {
                         ZStack {
-                            priority.color
-                            Text(priority.asString)
+                            item.priority.color
+                            Text(item.priority.asString)
                                 .font(.footnote)
                                 .fontWeight(.semibold)
                                 .foregroundStyle(.white)
                         }
-                        .matchedGeometryEffect(id: priority, in: ns, isSource: false)
+                        .matchedGeometryEffect(id: item.priority, in: ns, isSource: false)
                         .clipShape(RoundedRectangle(cornerRadius: 7))
-                        .animation(.spring(duration: 0.28), value: priority)
+                        .animation(.spring(duration: 0.28), value: item.priority)
                     }
                 }
                 
                 Section("Notizen") {
-                    TextEditor(text: $notizenEditor)
+                    TextEditor(text: $item.notiz)
                         .frame(height: 200)
                 }
                 
-                Button("Person löschen", role: .destructive) {
+                Button("Todo erledigt") {
                     
+                }
+                
+                Section {
+                    Button("Todo löschen", role: .destructive) {
+                        
+                    }
+                    Button("Person löschen", role: .destructive) {
+                        
+                    }
                 }
             }
             .navigationTitle("Informationen")
@@ -148,5 +164,6 @@ struct EditTodoView: View {
 }
 
 #Preview {
-    EditTodoView(person: Person(name: "Michi", item: [TodolistItem(todoName: "Test", priority: "Niedrig")])/*, priority: .constant(.hoch)*/, item: TodolistItem(todoName: "Test", priority: "Niedrig"), todoName: .constant("Irgendein todo"))
+//    EditTodoView(person: Person(name: "Michi", item: [TodolistItem(todoName: "Test", priority: "Niedrig")])/*, priority: .constant(.hoch)*/, item: TodolistItem(todoName: "Test", priority: "Niedrig"), todoName: .constant("Irgendein todo"))
+    EditTodoView(person: NewPerson(name: "Michi", items: [NewTodoItem(todoName: "Essen", priority: .mittel, notiz: "", date: .now)]), item: NewTodoItem(todoName: "Essen", priority: .mittel, notiz: "", date: .now))
 }

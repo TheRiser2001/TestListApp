@@ -9,7 +9,6 @@ import SwiftUI
 
 struct AddWunschSheetView: View {
     
-    
     @State private var titelTextField: String = ""
     @State private var kostenTextField: String = ""
     @State private var notizen: String = ""
@@ -101,12 +100,18 @@ struct AddWunschSheetView: View {
                 }
                 
             }
-            .navigationTitle("Neuen Artikel hinzufügen")
+            .navigationTitle("Neuer Artikel")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button("Save") {
                         addWunsch()
+                    }
+                }
+                
+                ToolbarItem(placement: .topBarLeading) {
+                    Button("Abbrechen") {
+                        dismiss()
                     }
                 }
             }
@@ -127,32 +132,32 @@ struct AddWunschSheetView: View {
     }
 }
 
-struct GaugeSheet: View {
-    
-    @Binding var amount: Double
-    @Binding var gaugeAmount: Double
-    let prioPicker: Priority
-    
-    var body: some View {
-        VStack(alignment: .center) {
-            Grid {
-                ForEach(0..<2) { _ in
-                    GridRow {
-                        HStack(alignment: .bottom) {
-                            ForEach(0..<5) { _ in
-                                Gauge(value: amount) {
-                                    Text("\(String(format: "%.0f", gaugeAmount))%")
-                                }
-                            }
-                        }
-                        .gaugeStyle(.accessoryCircularCapacity)
-                        .tint(prioPicker.color)
-                    }
-                }
-            }
-        }
-    }
-}
+//struct GaugeSheet: View {
+//    
+//    @Binding var amount: Double
+//    @Binding var gaugeAmount: Double
+//    let prioPicker: Priority
+//    
+//    var body: some View {
+//        VStack(alignment: .center) {
+//            Grid {
+//                ForEach(0..<2) { _ in
+//                    GridRow {
+//                        HStack(alignment: .bottom) {
+//                            ForEach(0..<5) { _ in
+//                                Gauge(value: amount) {
+//                                    Text("\(String(format: "%.0f", gaugeAmount))%")
+//                                }
+//                            }
+//                        }
+//                        .gaugeStyle(.accessoryCircularCapacity)
+//                        .tint(prioPicker.color)
+//                    }
+//                }
+//            }
+//        }
+//    }
+//}
 
 struct PreisView: View {
     
@@ -175,10 +180,10 @@ struct PreisView: View {
                 }
                 Text("€")
             }
-            Toggle("Bereits was gespart?", isOn: $toggleGespart)
+            Toggle("Bereits etwas angespart?", isOn: $toggleGespart)
             if toggleGespart {
                 HStack {
-                    Text("Wieviel hast du bereits gespart?")
+                    Text("Gespart")
                     ZStack(alignment: .trailing) {
                         RoundedRectangle(cornerRadius: 10)
                             .foregroundStyle(Color.secondary.opacity(0.1))

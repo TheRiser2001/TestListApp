@@ -151,6 +151,6 @@ struct TextFieldView: View {
     }
 }
 
-#Preview {
-    AnleitungenView(listInfo: ListInfo(listName: "", backgroundColor: .blue, accentColor: .black))
-}
+//#Preview {
+//    AnleitungenView(listInfo: ListInfo(listName: "", systemName: "cart", backgroundColor: .blue, accentColor: .black))
+//}
