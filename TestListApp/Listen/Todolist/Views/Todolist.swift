@@ -20,8 +20,6 @@ struct Todolist: View {
     @State private var addSheet: Bool = false
     @State private var showAlert: Bool = false
     
-    let listInfo: ListInfo
-    
     var body: some View {
             ZStack {
                 List {
@@ -70,7 +68,7 @@ struct Todolist: View {
 //                .presentationDetents([.fraction(0.6)])
         }
         
-        .toolbarBackground(listInfo.backgroundColor.opacity(0.6), for: .navigationBar)
+        .toolbarBackground(Color.silber.opacity(0.6), for: .navigationBar)
         .toolbarBackground(.visible, for: .navigationBar)
     }
 }
@@ -206,8 +204,6 @@ struct TodoRowView: View {
     }
 }
 
-//#Preview {
-//    NavigationStack {
-//        Todolist(listInfo: ListInfo(listName: "", systemName: "cart", backgroundColor: .blue, accentColor: .white))
-//    }
-//}
+#Preview {
+    Todolist()
+}

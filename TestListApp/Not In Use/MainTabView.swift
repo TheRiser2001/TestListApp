@@ -9,11 +9,9 @@ import SwiftUI
 
 struct MainTabView: View {
     
-    @State private var backgroundColor: Color = .red
-    
     var body: some View {
         TabView {
-            MainListView(backgroundColor: $backgroundColor)
+            MainListView()
                 .tabItem { Label("Home", systemImage: "pencil.and.list.clipboard") }
         }
     }

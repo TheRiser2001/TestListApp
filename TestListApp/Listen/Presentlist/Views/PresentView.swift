@@ -8,14 +8,14 @@
 import SwiftUI
 
 
-struct GeschenkeView: View {
+struct PresentView: View {
     @State private var people: [PresentPerson] = [
         PresentPerson(name: "Mama", items: [PresentItem(name: "Gartenzwerg", status: .unterwegs, price: 200, showDate: false, date: Date.now), PresentItem(name: "Blumentopf", status: .ueberlegung, price: 50, showDate: false, date: Date.now), PresentItem(name: "Test", status: .unmöglich, price: 100, showDate: false, date: Date.now), PresentItem(name: "Irgendwas", status: .ueberlegung, price: 0, showDate: false, date: Date.now)]),
         PresentPerson(name: "Papa", items: [PresentItem(name: "Auto", status: .unmöglich, price: 100, showDate: false, date: Date.now)]),
         PresentPerson(name: "Tina", items: [PresentItem(name: "Buch", status: .ueberlegung, price: 10, showDate: false, date: Date.now)]),
         PresentPerson(name: "Michi", items: [PresentItem(name: "MacBook Air", status: .besorgt, price: 5000, showDate: false, date: Date.now)])
     ]
-    let listInfo: ListInfo
+//    let listInfo: ListInfo
     
     var body: some View {
         NavigationStack {
@@ -45,7 +45,7 @@ struct GeschenkeView: View {
                     }
                 }
                 
-                .toolbarBackground(listInfo.backgroundColor.opacity(0.6), for: .navigationBar)
+                .toolbarBackground(Color.pink.opacity(0.6), for: .navigationBar)
                 .toolbarBackground(.visible, for: .navigationBar)
             }
         }
@@ -69,7 +69,7 @@ struct RectangleView: View {
                         .bold()
                     
                     NavigationLink {
-                        GeschenkeDetailView(person: person, deletePerson: deletePerson)
+                        PresentDetailView(person: person, deletePerson: deletePerson)
                     } label: {
                         Image(systemName: "info.circle")
                     }
@@ -103,7 +103,7 @@ struct RectangleView: View {
     }
 }
 
-struct GeschenkeDetailView: View {
+struct PresentDetailView: View {
     @Environment(\.dismiss) var dismiss
     
     @State private var deletePersonAlert: Bool = false
@@ -121,7 +121,7 @@ struct GeschenkeDetailView: View {
                     .bold()
             }
             
-            GeschenkItemRow(person: person)
+            PresentItemRow(person: person)
             
             Section {
                 Button("Angekommene Produkte") {
@@ -197,7 +197,7 @@ struct GeschenkeDetailView: View {
     }
 }
 
-struct GeschenkItemRow: View {
+struct PresentItemRow: View {
     
     @State private var anzahlItems: Int = 0
     
@@ -308,5 +308,5 @@ struct ArrivedProducts: View {
 }
 
 #Preview {
-    GeschenkeView(listInfo: ListInfo(listName: "", systemName: "cart", itemsName: "Irgendwas", backgroundColor: .blue, accentColor: .white))
+    PresentView()
 }

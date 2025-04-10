@@ -45,9 +45,6 @@ struct MainListView: View {
     @State private var destination: Destination? = nil
     
     @State private var selectedActivity: Ereignis?
-    
-    @Binding var backgroundColor: Color
-    
     @State private var selectedListe: ListInfo?
     
     var body: some View {
@@ -106,23 +103,21 @@ struct MainListView: View {
     func destinationView(for listInfo: ListInfo) -> some View {
         switch destination(for: listInfo) {
         case .einkaufen:
-//            return AnyView(EinkaufslisteDetailView(listInfo: listInfo))
             return AnyView(GroceryListView())
         case .todo:
-            return AnyView(Todolist(listInfo: listInfo))
+            return AnyView(Todolist())
         case .wünsche:
-            return AnyView(WishlistView(listInfo: listInfo))
+            return AnyView(WishlistView())
         case .geschenke:
-            return AnyView(GeschenkeView(listInfo: listInfo))
+            return AnyView(PresentView())
         case .rezepte:
-            return AnyView(RecipesView(listInfo: listInfo))
+            return AnyView(RecipesView())
         case .anleitung:
             return AnyView(AnleitungenView(listInfo: listInfo))
         case .kalender:
             return AnyView(KalendarView())
         case .ausgabenrechner:
             return AnyView(AusgabenView(listInfo: listInfo))
-            return AnyView(TestView())
         }
     }
     
@@ -232,5 +227,5 @@ struct CardView: View {
 //}
 
 #Preview {
-    MainListView(backgroundColor: .constant(Color.red))
+    MainListView()
 }

@@ -22,8 +22,6 @@ struct RecipesView: View {
     
     @Query private var recipes: [Recipe]
     
-    let listInfo: ListInfo
-    
     var body: some View {
         NavigationStack {
             ZStack(alignment: .bottomTrailing) {
@@ -82,7 +80,7 @@ struct RecipesView: View {
             .toolbarBackground(.visible, for: .navigationBar)
             .toolbarBackground(Color.blue, for: .navigationBar)
             .ignoresSafeArea(edges: .bottom)
-            .background(Color.blue.opacity(0.2))
+            .background(Color.orange.opacity(0.2))
         }
         
         .sheet(isPresented: $showAllRecipes) {
@@ -197,5 +195,5 @@ struct RecipesView: View {
 }
 
 #Preview {
-    RecipesView(listInfo: ListInfo(listName: "", systemName: "", itemsName: "", backgroundColor: .red, accentColor: .white))
+    RecipesView()
 }

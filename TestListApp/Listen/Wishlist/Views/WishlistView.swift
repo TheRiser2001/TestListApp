@@ -32,8 +32,6 @@ struct WishlistView: View {
     @State private var expandOpen: Bool = true
     @State private var expandDone: Bool = false
     
-    let listInfo: ListInfo
-    
     var body: some View {
             ZStack {
                 if wishes.isEmpty {
@@ -114,7 +112,7 @@ struct WishlistView: View {
                     .presentationDetents([.fraction(0.8)])
             }
             
-            .toolbarBackground(listInfo.backgroundColor.opacity(0.6))
+            .toolbarBackground(Color.tuerkis.opacity(0.6))
             .toolbarBackground(.visible, for: .navigationBar)
     }
     
@@ -194,6 +192,6 @@ struct WishItemRow: View {
 
 #Preview {
     NavigationStack {
-        WishlistView(listInfo: ListInfo(listName: "", systemName: "cart", itemsName: "Test", backgroundColor: .blue, accentColor: .white))
+        WishlistView()
     }
 }

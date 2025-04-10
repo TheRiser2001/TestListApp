@@ -12,7 +12,6 @@ import SwiftData
 struct TestListAppApp: App {
     
     let container: ModelContainer
-    @State private var backgroundColor: Color = .red
     
     init() {
         do {
@@ -24,8 +23,7 @@ struct TestListAppApp: App {
     
     var body: some Scene {
         WindowGroup {
-            //MainTabView()
-            MainListView(backgroundColor: $backgroundColor)
+            MainListView()
                 .modelContainer(container)
         }
     }
