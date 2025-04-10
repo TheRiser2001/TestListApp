@@ -7,33 +7,33 @@
 
 import SwiftUI
 
-struct EditWunschSheetView: View {
+struct EditWishSheet: View {
     
     @Namespace private var ns
     
     @State private var testToggle: Bool = false
     @State private var showAlert: Bool = false
-    @State private var bearbeiten: Bool = true
+    @State private var editView: Bool = true
     
-    @Binding var wunsch: WunschModel
-    @Binding var wuensche: [WunschModel]
+    @Binding var wish: WishModel
+    @Binding var wishes: [WishModel]
     
     var body: some View {
-        if bearbeiten {
-            BearbeitenOn(showAlert: $showAlert, bearbeiten: $bearbeiten, wunsch: $wunsch, wuensche: $wuensche)
+        if editView {
+            EditViewOn(showAlert: $showAlert, editView: $editView, wish: $wish, wishes: $wishes)
         } else {
-            BearbeitenOff(showAlert: $showAlert, bearbeiten: $bearbeiten, wunsch: $wunsch)
+            EditViewOff(showAlert: $showAlert, editView: $editView, wish: $wish)
         }
     }
 }
 
-struct BearbeitenOff: View {
+struct EditViewOff: View {
     
     @Environment(\.dismiss) var dismiss
     
     @Binding var showAlert: Bool
-    @Binding var bearbeiten: Bool
-    @Binding var wunsch: WunschModel
+    @Binding var editView: Bool
+    @Binding var wish: WishModel
     
     private let dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
@@ -47,20 +47,20 @@ struct BearbeitenOff: View {
                 HStack {
                     Text("Name")
                     Spacer()
-                    Text(wunsch.name)
+                    Text(wish.name)
                 }
                 
                 HStack {
                     Text("Priorität")
                     Spacer()
-                    Text("\(wunsch.priority.asString)")
-                        .foregroundStyle(wunsch.priority.color)
+                    Text("\(wish.priority.asString)")
+                        .foregroundStyle(wish.priority.color)
                 }
                 
                 HStack {
                     Text("Wunschtermin")
                     Spacer()
-                    Text("\(wunsch.date, formatter: dateFormatter)")
+                    Text("\(wish.date, formatter: dateFormatter)")
                 }
             }
             
@@ -69,26 +69,26 @@ struct BearbeitenOff: View {
                     VStack(alignment: .leading) {
                         HStack {
                             Text("€")
-                            TextField("Ersparnis", value: $wunsch.gespart, formatter: NumberFormatter())
-                                .onChange(of: wunsch.gespart) {
-                                    if wunsch.gespart > wunsch.kosten {
-                                        wunsch.gespart = wunsch.kosten
+                            TextField("Ersparnis", value: $wish.saved, formatter: NumberFormatter())
+                                .onChange(of: wish.saved) {
+                                    if wish.saved > wish.cost {
+                                        wish.saved = wish.cost
                                     }
-                                    if wunsch.kosten <= -1 {
-                                        wunsch.kosten = 0
+                                    if wish.cost <= -1 {
+                                        wish.cost = 0
                                     }
                                 }
                         }
-                        Text("Gesamtkosten: \(String(format: "%.0f", wunsch.kosten))€")
+                        Text("Gesamtkosten: \(String(format: "%.0f", wish.cost))€")
                             .font(.footnote)
                     }
                     Spacer()
                     
-                    Gauge(value: wunsch.gaugeProzent) {
-                        Text("\(String(format: "%.0f", wunsch.gaugeProzent * 100))%")
+                    Gauge(value: wish.gaugePercent) {
+                        Text("\(String(format: "%.0f", wish.gaugePercent * 100))%")
                     }
                     .gaugeStyle(.accessoryCircularCapacity)
-                    .tint(wunsch.priority.color)
+                    .tint(wish.priority.color)
                     
                     //MARK: Muss dann nach wunsch.gaugeProzent angepasst werden
 //                    .gesture(
@@ -122,11 +122,11 @@ struct BearbeitenOff: View {
             }
             
             Section("Notizen") {
-                TextEditor(text: $wunsch.notizen)
+                TextEditor(text: $wish.notes)
                     .frame(height: 160)
             }
             
-            if wunsch.abgeschlossen {
+            if wish.isDone {
                 Button("Wunsch zurückholen") {
                     showAlert.toggle()
                 }
@@ -148,63 +148,63 @@ struct BearbeitenOff: View {
             ToolbarItem(placement: .topBarTrailing) {
                 Button("Bearbeiten") {
                     withAnimation {
-                        bearbeiten.toggle()
+                        editView.toggle()
                     }
                 }
             }
         }
         
-        .alert(wunsch.abgeschlossen ? "Wunsch zurückholen" : "Wunsch erfüllt?", isPresented: $showAlert) {
+        .alert(wish.isDone ? "Wunsch zurückholen" : "Wunsch erfüllt?", isPresented: $showAlert) {
             Button("Nein", role: .cancel) {
-                if wunsch.abgeschlossen {
-                    wunsch.abgeschlossen = true
+                if wish.isDone {
+                    wish.isDone = true
                 } else {
-                    wunsch.abgeschlossen = false
+                    wish.isDone = false
                 }
                 showAlert = false
             }
             Button("Ja") {
-                if wunsch.abgeschlossen {
-                    wunsch.abgeschlossen = false
-                    wunsch.gespart = 0
+                if wish.isDone {
+                    wish.isDone = false
+                    wish.saved = 0
                 } else {
-                    wunsch.abgeschlossen = true
-                    wunsch.gespart = wunsch.kosten
+                    wish.isDone = true
+                    wish.saved = wish.cost
                 }
                 dismiss()
             }
         } message: {
-            Text(wunsch.abgeschlossen ? "Der Wunsch taucht wieder bei den offenen Wünschen auf" : "Du kannst den Wunsch jederzeit wieder aus deinen abgeschlossenen Wünschen zurückholen")
+            Text(wish.isDone ? "Der Wunsch taucht wieder bei den offenen Wünschen auf" : "Du kannst den Wunsch jederzeit wieder aus deinen abgeschlossenen Wünschen zurückholen")
         }
         
         
     }
 }
 
-struct BearbeitenOn: View {
+struct EditViewOn: View {
     
     @Environment(\.dismiss) var dismiss
     
-    @State private var toggleGespart: Bool = false
+    @State private var toggleSaved: Bool = false
     @State private var alertDelete: Bool = false
     
     @Binding var showAlert: Bool
-    @Binding var bearbeiten: Bool
-    @Binding var wunsch: WunschModel
-    @Binding var wuensche: [WunschModel]
+    @Binding var editView: Bool
+    @Binding var wish: WishModel
+    @Binding var wishes: [WishModel]
     
     var body: some View {
         Form {
             Section("Artikeldetail") {
-                TextField("", text: $wunsch.name)
+                TextField("", text: $wish.name)
             }
             
             Section("Priorität") {
-                PriorityPicker(prioPicker: $wunsch.priority)
+                PriorityPicker(prioPicker: $wish.priority)
             }
             
             Section("Zeitraum") {
-                DatePicker("Wunschtermin", selection: $wunsch.date, displayedComponents: .date)
+                DatePicker("Wunschtermin", selection: $wish.date, displayedComponents: .date)
             }
             
             Section("Gesamtkosten") {
@@ -215,7 +215,7 @@ struct BearbeitenOn: View {
                         RoundedRectangle(cornerRadius: 10)
                             .foregroundStyle(Color.secondary.opacity(0.1))
                             .frame(width: 80)
-                        TextField("0", value: $wunsch.kosten, formatter: NumberFormatter())
+                        TextField("0", value: $wish.cost, formatter: NumberFormatter())
                             .multilineTextAlignment(.trailing)
                             .padding(.trailing)
                     }
@@ -224,7 +224,7 @@ struct BearbeitenOn: View {
             }
             
             Section("Notizen") {
-                TextEditor(text: $wunsch.notizen)
+                TextEditor(text: $wish.notes)
                     .frame(height: 160)
             }
             
@@ -250,7 +250,7 @@ struct BearbeitenOn: View {
             ToolbarItem(placement: .topBarTrailing) {
                 Button("Fertig") {
                     withAnimation {
-                        bearbeiten = false
+                        editView = false
                     }
                 }
             }
@@ -268,12 +268,12 @@ struct BearbeitenOn: View {
     
     //    $0.id == wunsch.id --> Finde das erste Element im Array "wuensche", dessen "id" mit der "id" des aktuellen wunsch übereinstimmt
     private func delete() {
-        if let index = wuensche.firstIndex(where: { $0.id == wunsch.id }) {
-            wuensche.remove(at: index)
+        if let index = wishes.firstIndex(where: { $0.id == wish.id }) {
+            wishes.remove(at: index)
         }
     }
 }
 
 #Preview {
-    EditWunschSheetView(wunsch: .constant(WunschModel(name: "iPad Pro 11''", priority: .dringend, date: Date(), kosten: 1400)), wuensche: .constant([WunschModel(name: "", priority: .niedrig, date: .now, kosten: 0.0)]))
+    EditWishSheet(wish: .constant(WishModel(name: "iPad Pro 11''", priority: .dringend, date: Date(), cost: 1400)), wishes: .constant([WishModel(name: "", priority: .niedrig, date: .now, cost: 0.0)]))
 }

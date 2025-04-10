@@ -8,44 +8,11 @@
 import SwiftUI
 import SwiftData
 
-class NewPerson: Identifiable, ObservableObject {
-    let id = UUID()
-    @Published var name: String
-    @Published var items: [NewTodoItem]
-    
-    init(name: String, items: [NewTodoItem]) {
-        self.name = name
-        self.items = items
-    }
-}
-
-class NewTodoItem: Identifiable, ObservableObject {
-    
-    let id = UUID()
-    @Published var todoName: String
-    @Published var priority: Priority
-    @Published var notiz: String
-    @Published var date: Date
-    @Published var hour: Date
-    @Published var dateToggle: Bool
-    @Published var hourToggle: Bool
-    
-    init(todoName: String, priority: Priority, notiz: String, date: Date = .now, hour: Date = .now, dateToggle: Bool = false, hourToggle: Bool = false) {
-        self.todoName = todoName
-        self.priority = priority
-        self.notiz = notiz
-        self.date = date
-        self.hour = hour
-        self.dateToggle = dateToggle
-        self.hourToggle = hourToggle
-    }
-}
-
 struct Todolist: View {
     @Environment(\.modelContext) var context
-    @State private var personenTest: [NewPerson] = [
-        NewPerson(name: "Michi", items: [NewTodoItem(todoName: "Putzen", priority: .niedrig, notiz: "")]),
-        NewPerson(name: "Tina", items: [NewTodoItem(todoName: "Essen machen", priority: .dringend, notiz: "")])
+    @State private var people: [TodoPerson] = [
+        TodoPerson(name: "Michi", items: [TodoItem(todoName: "Putzen", priority: .niedrig, note: "")]),
+        TodoPerson(name: "Tina", items: [TodoItem(todoName: "Essen machen", priority: .dringend, note: "")])
     ]
 //    @Query var personen: [Person]
     
@@ -56,12 +23,10 @@ struct Todolist: View {
     let listInfo: ListInfo
     
     var body: some View {
-        
-//        NavigationStack {
             ZStack {
                 List {
-                    ForEach(personenTest.indices, id: \.self) { index in
-                        SectionRowView(personIdWithoutItems: $personIdWithoutItems, person: personenTest[index])
+                    ForEach(people.indices, id: \.self) { index in
+                        SectionRowView(personIdWithoutItems: $personIdWithoutItems, person: people[index])
                     }
                 }
                 .listStyle(.sidebar)
@@ -71,7 +36,7 @@ struct Todolist: View {
                     }
                 }
                 
-                if personenTest.isEmpty {
+                if people.isEmpty {
                     EmptyStateView(sfSymbol: "star.fill", message: "Du hast alle deine Aufgaben erledigt.")
                 }
             }
@@ -80,8 +45,8 @@ struct Todolist: View {
                     personIdWithoutItems = nil
                 }
                 Button("Löschen", role: .destructive) {
-                    if let index = personenTest.firstIndex(where: { $0.id == personIdWithoutItems }) {
-                        personenTest.remove(at: index)
+                    if let index = people.firstIndex(where: { $0.id == personIdWithoutItems }) {
+                        people.remove(at: index)
 //                        context.delete(personenTest[index])
                     }
                     personIdWithoutItems = nil
@@ -99,10 +64,9 @@ struct Todolist: View {
                     }
                 }
             }
-//        }
         
         .sheet(isPresented: $addSheet) {
-            AddTodoSectionView(personen: $personenTest)
+            AddTodoSection(people: $people)
 //                .presentationDetents([.fraction(0.6)])
         }
         
@@ -119,7 +83,7 @@ struct SectionRowView: View {
     
     @Binding var personIdWithoutItems: UUID?
     
-    @ObservedObject var person: NewPerson
+    @ObservedObject var person: TodoPerson
     
     var body: some View {
         
@@ -135,7 +99,7 @@ struct SectionRowView: View {
             }
             
             Button {
-                let newItem = NewTodoItem(todoName: "", priority: .niedrig, notiz: "", date: .now)
+                let newItem = TodoItem(todoName: "", priority: .niedrig, note: "", date: .now)
                 withAnimation {
                     person.items.append(newItem)
                 }
@@ -153,11 +117,10 @@ struct SectionRowView: View {
 struct TodoRowView: View {
     
     @State private var isDone: Bool = false
-    
     @State private var editSheet: Bool = false
     
-    @ObservedObject var item: NewTodoItem
-    @ObservedObject var person: NewPerson
+    @ObservedObject var item: TodoItem
+    @ObservedObject var person: TodoPerson
     
     var body: some View {
         VStack {
@@ -238,7 +201,7 @@ struct TodoRowView: View {
         }
         
         .sheet(isPresented: $editSheet) {
-            EditTodoView(person: person/*, priority: $item.priority*/, item: item)
+            EditTodo(person: person/*, priority: $item.priority*/, item: item)
         }
     }
 }

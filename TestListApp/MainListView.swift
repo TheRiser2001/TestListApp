@@ -34,10 +34,10 @@ struct MainListView: View {
         ListInfo(listName: "Todo", systemName: "cart", itemsName: "Todos", backgroundColor: .silber, accentColor: .black),
         ListInfo(listName: "Wünsche", systemName: "cart", itemsName: "Träume", backgroundColor: .tuerkis, accentColor: .black),
         ListInfo(listName: "Geschenke", systemName: "cart", itemsName: "Geschenke", backgroundColor: .pink, accentColor: .black),
-        ListInfo(listName: "Rezepte", systemName: "cart", itemsName: "Rezepte", backgroundColor: .orange, accentColor: .black),
-        ListInfo(listName: "Anleitungen", systemName: "cart", itemsName: "Anleitungen", backgroundColor: .tan, accentColor: .black),
-        ListInfo(listName: "Alle Jahre wieder", systemName: "cart", itemsName: "Termine", backgroundColor: .magenta, accentColor: .white),
-        ListInfo(listName: "Ausgabenrechner", systemName: "cart", itemsName: "Ausgaben", backgroundColor: .navy, accentColor: .white)
+        ListInfo(listName: "Rezepte", systemName: "cart", itemsName: "Rezepte", backgroundColor: .orange, accentColor: .black)
+//        ListInfo(listName: "Anleitungen", systemName: "cart", itemsName: "Anleitungen", backgroundColor: .tan, accentColor: .black),
+//        ListInfo(listName: "Alle Jahre wieder", systemName: "cart", itemsName: "Termine", backgroundColor: .magenta, accentColor: .white),
+//        ListInfo(listName: "Ausgabenrechner", systemName: "cart", itemsName: "Ausgaben", backgroundColor: .navy, accentColor: .white)
     ]
     @State private var newTitle: String = ""
     @State private var isPresented: Bool = false
@@ -79,6 +79,8 @@ struct MainListView: View {
             //                    .presentationDetents([.fraction(0.8)])
             //            })
         }
+        .tint(.black)
+        
         .listStyle(.plain)
 //        .onChange(of: backgroundColor) { _, newValue in
 //            liste.indices.forEach { index in
@@ -94,9 +96,9 @@ struct MainListView: View {
         case "Wünsche": return .wünsche
         case "Geschenke": return .geschenke
         case "Rezepte": return .rezepte
-        case "Anleitungen": return .anleitung
-        case "Alle Jahre wieder": return .kalender
-        case "Ausgabenrechner": return .ausgabenrechner
+//        case "Anleitungen": return .anleitung
+//        case "Alle Jahre wieder": return .kalender
+//        case "Ausgabenrechner": return .ausgabenrechner
         default: return .einkaufen
         }
     }
@@ -109,7 +111,7 @@ struct MainListView: View {
         case .todo:
             return AnyView(Todolist(listInfo: listInfo))
         case .wünsche:
-            return AnyView(WunschlisteView(listInfo: listInfo))
+            return AnyView(WishlistView(listInfo: listInfo))
         case .geschenke:
             return AnyView(GeschenkeView(listInfo: listInfo))
         case .rezepte:
@@ -119,7 +121,7 @@ struct MainListView: View {
         case .kalender:
             return AnyView(KalendarView())
         case .ausgabenrechner:
-//            return AnyView(AusgabenView(listInfo: listInfo))
+            return AnyView(AusgabenView(listInfo: listInfo))
             return AnyView(TestView())
         }
     }

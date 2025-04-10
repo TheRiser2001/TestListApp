@@ -9,14 +9,14 @@
 
 import SwiftUI
 
-struct EditTodoView: View {
+struct EditTodo: View {
     
     @Namespace private var ns
     
     @Environment(\.dismiss) var dismiss
     
-    @ObservedObject var person: NewPerson
-    @ObservedObject var item: NewTodoItem
+    @ObservedObject var person: TodoPerson
+    @ObservedObject var item: TodoItem
     
     private let hourFormatter: DateFormatter = {
         let formatter = DateFormatter()
@@ -126,7 +126,7 @@ struct EditTodoView: View {
                 }
                 
                 Section("Notizen") {
-                    TextEditor(text: $item.notiz)
+                    TextEditor(text: $item.notes)
                         .frame(height: 200)
                 }
                 
@@ -165,5 +165,5 @@ struct EditTodoView: View {
 
 #Preview {
 //    EditTodoView(person: Person(name: "Michi", item: [TodolistItem(todoName: "Test", priority: "Niedrig")])/*, priority: .constant(.hoch)*/, item: TodolistItem(todoName: "Test", priority: "Niedrig"), todoName: .constant("Irgendein todo"))
-    EditTodoView(person: NewPerson(name: "Michi", items: [NewTodoItem(todoName: "Essen", priority: .mittel, notiz: "", date: .now)]), item: NewTodoItem(todoName: "Essen", priority: .mittel, notiz: "", date: .now))
+    EditTodo(person: TodoPerson(name: "Michi", items: [TodoItem(todoName: "Essen", priority: .mittel, note: "", date: .now)]), item: TodoItem(todoName: "Essen", priority: .mittel, note: "", date: .now))
 }

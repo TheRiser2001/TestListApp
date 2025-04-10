@@ -8,17 +8,17 @@
 import SwiftUI
 import SwiftData
 
-struct WunschlisteView: View {
+struct WishlistView: View {
     
-    @State private var wuensche: [WunschModel] = [
-        WunschModel(name: "iPad Pro 11''", priority: .dringend, date: Date(), kosten: 1400),
-        WunschModel(name: "Test", priority: .niedrig, date: Date(), kosten: 100),
-        WunschModel(name: "Opfer", priority: .hoch, date: Date(), kosten: 550)
+    @State private var wishes: [WishModel] = [
+        WishModel(name: "iPad Pro 11''", priority: .dringend, date: Date(), cost: 1400),
+        WishModel(name: "Test", priority: .niedrig, date: Date(), cost: 100),
+        WishModel(name: "Opfer", priority: .hoch, date: Date(), cost: 550)
     ]
     @State private var sortAsc: Bool = true
     @State private var filter: Priority?
-    private var wunschListe: [WunschModel] {
-        wuensche.sorted(by: {
+    private var wishesList: [WishModel] {
+        wishes.sorted(by: {
             sortAsc ? $0.priority.rawValue > $1.priority.rawValue: $0.priority.rawValue < $1.priority.rawValue
         }).filter({
             guard let filter else { return true }
@@ -29,7 +29,6 @@ struct WunschlisteView: View {
     @State private var toggleSortButton: Bool = false
     @State private var filterSelected: Bool = false
     @State private var selectedFilter: String = ""
-    
     @State private var expandOpen: Bool = true
     @State private var expandDone: Bool = false
     
@@ -37,19 +36,19 @@ struct WunschlisteView: View {
     
     var body: some View {
             ZStack {
-                if wuensche.isEmpty {
+                if wishes.isEmpty {
                     EmptyStateView(sfSymbol: "star.fill", message: "Du hast im Moment keine Wünsche.\n Füge welche hinzu und verwirkliche deine Träume!")
                 } else {
                     List {
                         Section(isExpanded: $expandOpen) {
-                            ForEach(wunschListe, id: \.id) { wunsch in
-                                if !wunsch.abgeschlossen {
-                                    NavigationLink(value: wunsch) {
-                                        WunschItemRow(wunsch: wunsch)
+                            ForEach(wishesList, id: \.id) { wish in
+                                if !wish.isDone {
+                                    NavigationLink(value: wish) {
+                                        WishItemRow(wish: wish)
                                     }
                                 }
                                 // MARK: Funktioniert nicht, soll eine view sein wenn keine abgeschlossenen wünsche vorhanden sind
-                                if wunsch.abgeschlossen.description.count <= 1 {
+                                if wish.isDone.description.count <= 1 {
                                     HStack {
                                         VStack(alignment: .leading) {
                                             Text("Keine offenen Wünsche")
@@ -70,15 +69,15 @@ struct WunschlisteView: View {
                                 }
                             }
                             .onDelete { offSet in
-                                wuensche.remove(atOffsets: offSet)
+                                wishes.remove(atOffsets: offSet)
                             }
                         } header: { Text("Offene Wünsche") }
                         
                         Section(isExpanded: $expandDone) {
-                            ForEach(wunschListe, id: \.id) { wunsch in
-                                if wunsch.abgeschlossen {
-                                    NavigationLink(value: wunsch) {
-                                        WunschItemRow(wunsch: wunsch)
+                            ForEach(wishesList, id: \.id) { wish in
+                                if wish.isDone {
+                                    NavigationLink(value: wish) {
+                                        WishItemRow(wish: wish)
                                     }
                                 }
                             }
@@ -90,9 +89,9 @@ struct WunschlisteView: View {
                 }
             }
             .navigationTitle("Wünsche")
-            .navigationDestination(for: WunschModel.self) { wunsch in
-                if let edit = $wuensche.first(where: { $0.id.wrappedValue == wunsch.id }) {
-                    EditWunschSheetView(wunsch: edit, wuensche: $wuensche)
+            .navigationDestination(for: WishModel.self) { wish in
+                if let edit = $wishes.first(where: { $0.id.wrappedValue == wish.id }) {
+                    EditWishSheet(wish: edit, wishes: $wishes)
                 }
             }
             
@@ -111,7 +110,7 @@ struct WunschlisteView: View {
             }
             
             .sheet(isPresented: $addSheet) {
-                AddWunschSheetView(wuensche: $wuensche)
+                AddWishSheet(wishes: $wishes)
                     .presentationDetents([.fraction(0.8)])
             }
             
@@ -164,37 +163,37 @@ struct WunschlisteView: View {
     }
 }
 
-struct WunschItemRow: View {
+struct WishItemRow: View {
     
-    let wunsch: WunschModel
+    let wish: WishModel
     
     var body: some View {
         HStack(spacing: 20) {
             RoundedRectangle(cornerRadius: 10)
                 .frame(width: 5)
                 .frame(maxHeight: .infinity)
-                .foregroundStyle(wunsch.priority.color)
+                .foregroundStyle(wish.priority.color)
             
             VStack(alignment: .leading, spacing: 20) {
-                Text(wunsch.name)
+                Text(wish.name)
                     .font(.headline)
-                Text("\(String(format: "%.0f", wunsch.gespart))€ angespart")
+                Text("\(String(format: "%.0f", wish.saved))€ angespart")
                     .font(.subheadline)
             }
             
             Spacer()
             
-            Gauge(value: wunsch.gaugeProzent) {
-                Text("\(String(format: "%.0f", wunsch.gaugeProzent * 100))%")
+            Gauge(value: wish.gaugePercent) {
+                Text("\(String(format: "%.0f", wish.gaugePercent * 100))%")
             }
             .gaugeStyle(.accessoryCircularCapacity)
-            .tint(wunsch.priority.color)
+            .tint(wish.priority.color)
         }
     }
 }
 
 #Preview {
     NavigationStack {
-        WunschlisteView(listInfo: ListInfo(listName: "", systemName: "cart", itemsName: "Test", backgroundColor: .blue, accentColor: .white))
+        WishlistView(listInfo: ListInfo(listName: "", systemName: "cart", itemsName: "Test", backgroundColor: .blue, accentColor: .white))
     }
 }

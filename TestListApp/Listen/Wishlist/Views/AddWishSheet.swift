@@ -7,23 +7,21 @@
 
 import SwiftUI
 
-struct AddWunschSheetView: View {
+struct AddWishSheet: View {
     
-    @State private var titelTextField: String = ""
-    @State private var kostenTextField: String = ""
-    @State private var notizen: String = ""
-    
-    @State private var kosten: Double = 100
-    @State private var gespart: Double = 0
-    private var gaugeProzent: Double { (gespart/kosten) }
+    @State private var titleTextField: String = ""
+    @State private var costTextField: String = ""
+    @State private var notes: String = ""
+    @State private var cost: Double = 100
+    @State private var saved: Double = 0
+    private var gaugePercent: Double { (saved/cost) }
     
     @State private var alert: Bool = false
-    @State private var toggleGespart: Bool = false
-    
+    @State private var toggleSaved: Bool = false
     @State private var prioPicker: Priority = .niedrig
-    @State private var wunschDatum: Date = .now
+    @State private var wishDate: Date = .now
     
-    @Binding var wuensche: [WunschModel]
+    @Binding var wishes: [WishModel]
     
     @Environment(\.dismiss) var dismiss
     
@@ -31,7 +29,7 @@ struct AddWunschSheetView: View {
         NavigationStack {
             Form {
                 Section("Artikeldetails") {
-                    TextField("", text: $titelTextField, prompt: Text("Name des Artikels"))
+                    TextField("", text: $titleTextField, prompt: Text("Name des Artikels"))
                 }
                 
                 Section("Priorität") {
@@ -39,11 +37,11 @@ struct AddWunschSheetView: View {
                 }
                 
                 Section("Zeitraum") {
-                    DatePicker("Wunschtermin", selection: $wunschDatum, displayedComponents: .date)
+                    DatePicker("Wunschtermin", selection: $wishDate, displayedComponents: .date)
                 }
                 
                 Section("Preis") {
-                    PreisView(kosten: $kosten, gespart: $gespart, toggleGespart: $toggleGespart)
+                    PriceView(cost: $cost, saved: $saved, toggleSaved: $toggleSaved)
                 }
                 //MARK: Hier werde ich mal was anderes probieren
 //                Section("Kosten") {
@@ -95,7 +93,7 @@ struct AddWunschSheetView: View {
 //                }
                 
                 Section("Notizen") {
-                    TextEditor(text: $notizen)
+                    TextEditor(text: $notes)
                         .frame(height: 160)
                 }
                 
@@ -122,12 +120,12 @@ struct AddWunschSheetView: View {
     }
     
     func addWunsch() {
-        guard titelTextField != "" else {
+        guard titleTextField != "" else {
             alert.toggle()
             return
         }
-        let newWunsch = WunschModel(name: titelTextField, priority: prioPicker, date: .now, kosten: kosten, gespart: gespart)
-        wuensche.append(newWunsch)
+        let newWish = WishModel(name: titleTextField, priority: prioPicker, date: .now, cost: cost, saved: saved)
+        wishes.append(newWish)
         dismiss()
     }
 }
@@ -159,11 +157,11 @@ struct AddWunschSheetView: View {
 //    }
 //}
 
-struct PreisView: View {
+struct PriceView: View {
     
-    @Binding var kosten: Double
-    @Binding var gespart: Double
-    @Binding var toggleGespart: Bool
+    @Binding var cost: Double
+    @Binding var saved: Double
+    @Binding var toggleSaved: Bool
     
     var body: some View {
         VStack {
@@ -174,21 +172,21 @@ struct PreisView: View {
                     RoundedRectangle(cornerRadius: 10)
                         .foregroundStyle(Color.secondary.opacity(0.1))
                         .frame(width: 80)
-                    TextField("Test", value: $kosten, formatter: NumberFormatter())
+                    TextField("Test", value: $cost, formatter: NumberFormatter())
                         .multilineTextAlignment(.trailing)
                         .padding(.trailing)
                 }
                 Text("€")
             }
-            Toggle("Bereits etwas angespart?", isOn: $toggleGespart)
-            if toggleGespart {
+            Toggle("Bereits etwas angespart?", isOn: $toggleSaved)
+            if toggleSaved {
                 HStack {
                     Text("Gespart")
                     ZStack(alignment: .trailing) {
                         RoundedRectangle(cornerRadius: 10)
                             .foregroundStyle(Color.secondary.opacity(0.1))
                             .frame(width: 80)
-                        TextField("Test", value: $gespart, formatter: NumberFormatter())
+                        TextField("Test", value: $saved, formatter: NumberFormatter())
                             .multilineTextAlignment(.trailing)
                             .padding(.trailing)
                     }
@@ -200,5 +198,5 @@ struct PreisView: View {
 }
 
 #Preview {
-    AddWunschSheetView(wuensche: .constant([WunschModel(name: "Test", priority: .mittel, date: .now, kosten: 0.0)]))
+    AddWishSheet(wishes: .constant([WishModel(name: "Test", priority: .mittel, date: .now, cost: 0.0)]))
  }

@@ -7,63 +7,13 @@
 
 import SwiftUI
 
-class GeschenkPerson: ObservableObject, Identifiable {
-    let id = UUID()
-    @Published var name: String
-    @Published var items: [GeschenkItem]
-    
-    init(name: String, items: [GeschenkItem]) {
-        self.name = name
-        self.items = items
-    }
-}
-
-class GeschenkItem: ObservableObject, Identifiable {
-    let id = UUID()
-    @Published var name: String
-    @Published var status: Status
-    @Published var preis: Int
-    @Published var showDate: Bool
-    @Published var date: Date
-    
-    init(name: String, status: Status, preis: Int, showDate: Bool, date: Date) {
-        self.name = name
-        self.status = status
-        self.preis = preis
-        self.showDate = showDate
-        self.date = date
-    }
-}
-
-enum Status: CaseIterable, Comparable {
-    case besorgt
-    case unterwegs
-    case ueberlegung
-    case unmöglich
-    
-    var asString: String {
-        switch self {
-        case .ueberlegung: return "Überlegung"
-        default: return "\(self)".capitalized
-        }
-    }
-    
-    var color: Color {
-        switch self {
-        case .besorgt: return .green
-        case .unterwegs: return .blue
-        case .ueberlegung: return .orange
-        case .unmöglich: return .red
-        }
-    }
-}
 
 struct GeschenkeView: View {
-    @State private var personen: [GeschenkPerson] = [
-        GeschenkPerson(name: "Mama", items: [GeschenkItem(name: "Gartenzwerg", status: .unterwegs, preis: 200, showDate: false, date: Date.now), GeschenkItem(name: "Blumentopf", status: .ueberlegung, preis: 50, showDate: false, date: Date.now), GeschenkItem(name: "Test", status: .unmöglich, preis: 100, showDate: false, date: Date.now), GeschenkItem(name: "Irgendwas", status: .ueberlegung, preis: 0, showDate: false, date: Date.now)]),
-        GeschenkPerson(name: "Papa", items: [GeschenkItem(name: "Auto", status: .unmöglich, preis: 100, showDate: false, date: Date.now)]),
-        GeschenkPerson(name: "Tina", items: [GeschenkItem(name: "Buch", status: .ueberlegung, preis: 10, showDate: false, date: Date.now)]),
-        GeschenkPerson(name: "Michi", items: [GeschenkItem(name: "MacBook Air", status: .besorgt, preis: 5000, showDate: false, date: Date.now)])
+    @State private var people: [PresentPerson] = [
+        PresentPerson(name: "Mama", items: [PresentItem(name: "Gartenzwerg", status: .unterwegs, price: 200, showDate: false, date: Date.now), PresentItem(name: "Blumentopf", status: .ueberlegung, price: 50, showDate: false, date: Date.now), PresentItem(name: "Test", status: .unmöglich, price: 100, showDate: false, date: Date.now), PresentItem(name: "Irgendwas", status: .ueberlegung, price: 0, showDate: false, date: Date.now)]),
+        PresentPerson(name: "Papa", items: [PresentItem(name: "Auto", status: .unmöglich, price: 100, showDate: false, date: Date.now)]),
+        PresentPerson(name: "Tina", items: [PresentItem(name: "Buch", status: .ueberlegung, price: 10, showDate: false, date: Date.now)]),
+        PresentPerson(name: "Michi", items: [PresentItem(name: "MacBook Air", status: .besorgt, price: 5000, showDate: false, date: Date.now)])
     ]
     let listInfo: ListInfo
     
@@ -72,11 +22,11 @@ struct GeschenkeView: View {
             ScrollView {
                 VStack {
                     LazyVGrid(columns: Array(repeating: GridItem(), count: 2)) {
-                        ForEach(personen) { person in
+                        ForEach(people) { person in
                             RectangleView(person: person,
                                           deletePerson: {
-                                if let index = personen.firstIndex(where: { $0.id == person.id }) {
-                                    personen.remove(at: index)
+                                if let index = people.firstIndex(where: { $0.id == person.id }) {
+                                    people.remove(at: index)
                                 }
                             })
                         }
@@ -87,8 +37,8 @@ struct GeschenkeView: View {
                 .toolbar {
                     ToolbarItem(placement: .topBarTrailing) {
                         Button {
-                            let newPerson = GeschenkPerson(name: "Test", items: [GeschenkItem(name: "Test", status: .ueberlegung, preis: 0, showDate: false, date: Date.now)])
-                            personen.append(newPerson)
+                            let newPerson = PresentPerson(name: "Test", items: [PresentItem(name: "Test", status: .ueberlegung, price: 0, showDate: false, date: Date.now)])
+                            people.append(newPerson)
                         } label: {
                             Image(systemName: "plus.circle")
                         }
@@ -104,7 +54,7 @@ struct GeschenkeView: View {
 
 struct RectangleView: View {
     
-    @ObservedObject var person: GeschenkPerson
+    @ObservedObject var person: PresentPerson
     var deletePerson: () -> Void
     
     var body: some View {
@@ -119,7 +69,7 @@ struct RectangleView: View {
                         .bold()
                     
                     NavigationLink {
-                        GeschenkeDetailView( person: person, deletePerson: deletePerson)
+                        GeschenkeDetailView(person: person, deletePerson: deletePerson)
                     } label: {
                         Image(systemName: "info.circle")
                     }
@@ -161,7 +111,7 @@ struct GeschenkeDetailView: View {
     @State private var showArrivedAlert: Bool = false
     @State private var showDeleteAlert: Bool = false
     
-    @ObservedObject var person: GeschenkPerson
+    @ObservedObject var person: PresentPerson
     var deletePerson: () -> Void
     
     var body: some View {
@@ -215,7 +165,7 @@ struct GeschenkeDetailView: View {
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 Button {
-                    let newItem = GeschenkItem(name: "Neues Geschenk", status: .ueberlegung, preis: 10, showDate: false, date: Date.now)
+                    let newItem = PresentItem(name: "Neues Geschenk", status: .ueberlegung, price: 10, showDate: false, date: Date.now)
                     withAnimation {
                         person.items.append(newItem)
                     }
@@ -251,7 +201,7 @@ struct GeschenkItemRow: View {
     
     @State private var anzahlItems: Int = 0
     
-    @ObservedObject var person: GeschenkPerson
+    @ObservedObject var person: PresentPerson
       
     var body: some View {
         ForEach(person.items.indices, id: \.self) { index in
@@ -278,7 +228,7 @@ struct GeschenkItemRow: View {
                 HStack {
                     Text("Preis:")
                     Spacer()
-                    TextField("0", value: $person.items[index].preis, formatter: NumberFormatter())
+                    TextField("0", value: $person.items[index].price, formatter: NumberFormatter())
                         .multilineTextAlignment(.trailing)
                         .keyboardType(.numberPad)
                     Text("€")
@@ -321,7 +271,7 @@ struct ArrivedProducts: View {
     
     @State private var alertReturn: Bool = false
     
-    @ObservedObject var person: GeschenkPerson
+    @ObservedObject var person: PresentPerson
     
     var body: some View {
         Form {

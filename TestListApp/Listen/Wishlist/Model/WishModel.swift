@@ -30,9 +30,9 @@ enum Priority: Int, CaseIterable {
 }
 
 enum Period: CaseIterable {
-    case tag
-    case woche
-    case monat
+    case day
+    case week
+    case month
     
     var asString: String {
         "\(self)".capitalized
@@ -40,35 +40,35 @@ enum Period: CaseIterable {
     
     var maxSliderVal: Int {
         switch self {
-        case .tag: 31
-        case .woche: 52
-        case .monat: 12
+        case .day: 31
+        case .week: 52
+        case .month: 12
         }
     }
 }
 
-struct WunschModel: Hashable {
+struct WishModel: Hashable {
     var id: UUID
     var name: String
     var priority: Priority
     var date: Date
-    var kosten: Double
-    var gespart: Double
-    var notizen: String
-    var abgeschlossen: Bool
+    var cost: Double
+    var saved: Double
+    var notes: String
+    var isDone: Bool
     
-    var gaugeProzent: Double { (gespart/kosten) }
+    var gaugePercent: Double { (saved/cost) }
 //    var gaugeRing: Double
     
-    init(name: String, priority: Priority, date: Date, kosten: Double, gespart: Double = 0, notizen: String = "", abgeschlossen: Bool = false) {
+    init(name: String, priority: Priority, date: Date, cost: Double, saved: Double = 0, notes: String = "", isDone: Bool = false) {
         self.id = .init()
         self.name = name
         self.priority = priority
         self.date = date
-        self.kosten = kosten
-        self.gespart = gespart
-        self.notizen = notizen
-        self.abgeschlossen = abgeschlossen
+        self.cost = cost
+        self.saved = saved
+        self.notes = notes
+        self.isDone = isDone
     }
 }
 
