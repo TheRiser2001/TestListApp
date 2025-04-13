@@ -23,6 +23,7 @@
 		062C68E62B6EAB6900774BF1 /* SwiftData+Typealiases.swift in Sources */ = {isa = PBXBuildFile; fileRef = 062C68E52B6EAB6900774BF1 /* SwiftData+Typealiases.swift */; };
 		062C68E82B6EACED00774BF1 /* ModelSchemaV2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 062C68E72B6EACED00774BF1 /* ModelSchemaV2.swift */; };
 		062C68EA2B6EAD3000774BF1 /* DatabaseMigrationPlan.swift in Sources */ = {isa = PBXBuildFile; fileRef = 062C68E92B6EAD3000774BF1 /* DatabaseMigrationPlan.swift */; };
+		063ABF582DA91A5400DAB3A9 /* PresentDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 063ABF572DA91A5400DAB3A9 /* PresentDetailView.swift */; };
 		0650867B2DA7B7FA00D22B42 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0650866E2DA7B7FA00D22B42 /* Extensions.swift */; };
 		0650867C2DA7B7FA00D22B42 /* OffSetKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0650866F2DA7B7FA00D22B42 /* OffSetKey.swift */; };
 		0650867D2DA7B7FA00D22B42 /* Aufgabe.swift in Sources */ = {isa = PBXBuildFile; fileRef = 065086712DA7B7FA00D22B42 /* Aufgabe.swift */; };
@@ -34,7 +35,7 @@
 		065086832DA7B7FA00D22B42 /* OldKalenderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 065086782DA7B7FA00D22B42 /* OldKalenderView.swift */; };
 		065086892DA7C5BA00D22B42 /* TodoPerson.swift in Sources */ = {isa = PBXBuildFile; fileRef = 065086882DA7C5BA00D22B42 /* TodoPerson.swift */; };
 		0650868B2DA7C61200D22B42 /* TodoItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0650868A2DA7C61200D22B42 /* TodoItem.swift */; };
-		0650868D2DA7D32500D22B42 /* PresentModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0650868C2DA7D32500D22B42 /* PresentModel.swift */; };
+		0650868D2DA7D32500D22B42 /* PresentPerson.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0650868C2DA7D32500D22B42 /* PresentPerson.swift */; };
 		0650868F2DA7D33200D22B42 /* PresentItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0650868E2DA7D33200D22B42 /* PresentItem.swift */; };
 		065086922DA7D38C00D22B42 /* GroceryItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 065086912DA7D38C00D22B42 /* GroceryItem.swift */; };
 		065086942DA7D3A400D22B42 /* GroceryCategory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 065086932DA7D3A400D22B42 /* GroceryCategory.swift */; };
@@ -102,6 +103,7 @@
 		062C68E52B6EAB6900774BF1 /* SwiftData+Typealiases.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SwiftData+Typealiases.swift"; sourceTree = "<group>"; };
 		062C68E72B6EACED00774BF1 /* ModelSchemaV2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelSchemaV2.swift; sourceTree = "<group>"; };
 		062C68E92B6EAD3000774BF1 /* DatabaseMigrationPlan.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseMigrationPlan.swift; sourceTree = "<group>"; };
+		063ABF572DA91A5400DAB3A9 /* PresentDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PresentDetailView.swift; sourceTree = "<group>"; };
 		0650866E2DA7B7FA00D22B42 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		0650866F2DA7B7FA00D22B42 /* OffSetKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OffSetKey.swift; sourceTree = "<group>"; };
 		065086712DA7B7FA00D22B42 /* Aufgabe.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Aufgabe.swift; sourceTree = "<group>"; };
@@ -113,7 +115,7 @@
 		065086782DA7B7FA00D22B42 /* OldKalenderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OldKalenderView.swift; sourceTree = "<group>"; };
 		065086882DA7C5BA00D22B42 /* TodoPerson.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoPerson.swift; sourceTree = "<group>"; };
 		0650868A2DA7C61200D22B42 /* TodoItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoItem.swift; sourceTree = "<group>"; };
-		0650868C2DA7D32500D22B42 /* PresentModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PresentModel.swift; sourceTree = "<group>"; };
+		0650868C2DA7D32500D22B42 /* PresentPerson.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PresentPerson.swift; sourceTree = "<group>"; };
 		0650868E2DA7D33200D22B42 /* PresentItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PresentItem.swift; sourceTree = "<group>"; };
 		065086912DA7D38C00D22B42 /* GroceryItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroceryItem.swift; sourceTree = "<group>"; };
 		065086932DA7D3A400D22B42 /* GroceryCategory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroceryCategory.swift; sourceTree = "<group>"; };
@@ -196,7 +198,6 @@
 				06D4F25D2BEF7C0E00DA39AA /* Not In Use */,
 				067FF5092BB2E9EB00269944 /* Colors + Extensions */,
 				06C339182C36DD4D00F97F89 /* Buttons */,
-				062C68EB2B6EAD3B00774BF1 /* Migration */,
 				060CA4CF2B6D1B5A00F88620 /* TestListAppApp.swift */,
 				060CA4E92B6D1CB100F88620 /* MainListView.swift */,
 				064702D32BC0689900440524 /* Listen */,
@@ -324,7 +325,7 @@
 			isa = PBXGroup;
 			children = (
 				0650868E2DA7D33200D22B42 /* PresentItem.swift */,
-				0650868C2DA7D32500D22B42 /* PresentModel.swift */,
+				0650868C2DA7D32500D22B42 /* PresentPerson.swift */,
 				065086952DA7D5AC00D22B42 /* PresentEnums.swift */,
 			);
 			path = Model;
@@ -413,6 +414,7 @@
 			isa = PBXGroup;
 			children = (
 				067FF50E2BB2ED0500269944 /* PresentView.swift */,
+				063ABF572DA91A5400DAB3A9 /* PresentDetailView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -519,6 +521,7 @@
 		06D4F25D2BEF7C0E00DA39AA /* Not In Use */ = {
 			isa = PBXGroup;
 			children = (
+				062C68EB2B6EAD3B00774BF1 /* Migration */,
 				065796462B98BD84003BB7CD /* MainTabView.swift */,
 				0650867A2DA7B7FA00D22B42 /* Ideas */,
 				065A25752BB1C277004894D2 /* Einkaufsliste */,
@@ -626,7 +629,7 @@
 				060CA4E22B6D1C1700F88620 /* EinkauflisteDetailView.swift in Sources */,
 				06CDEA192D9E855500B29F46 /* RecipesView.swift in Sources */,
 				06C9AF1D2B93798600646C45 /* Color+Extensions.swift in Sources */,
-				0650868D2DA7D32500D22B42 /* PresentModel.swift in Sources */,
+				0650868D2DA7D32500D22B42 /* PresentPerson.swift in Sources */,
 				0683AC252DA7E87B000F620B /* WishEnums.swift in Sources */,
 				06C555DC2BD92ED1005E277B /* Class, enums, extensions.swift in Sources */,
 				0650867B2DA7B7FA00D22B42 /* Extensions.swift in Sources */,
@@ -647,6 +650,7 @@
 				060CA4E62B6D1C7100F88620 /* Einkaufsliste.swift in Sources */,
 				065086962DA7D5AC00D22B42 /* PresentEnums.swift in Sources */,
 				06CDEA112D9E840600B29F46 /* AddRecipeView.swift in Sources */,
+				063ABF582DA91A5400DAB3A9 /* PresentDetailView.swift in Sources */,
 				060CA4D02B6D1B5A00F88620 /* TestListAppApp.swift in Sources */,
 				062C68EA2B6EAD3000774BF1 /* DatabaseMigrationPlan.swift in Sources */,
 				069416B42C259AD50016F45D /* WishModel.swift in Sources */,

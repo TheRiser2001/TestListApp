@@ -10,6 +10,8 @@ import SwiftData
 
 struct Todolist: View {
     @Environment(\.modelContext) var context
+    @Environment(\.dismiss) var dismiss
+    
     @State private var people: [TodoPerson] = [
         TodoPerson(name: "Michi", items: [TodoItem(todoName: "Putzen", priority: .niedrig, note: "")]),
         TodoPerson(name: "Tina", items: [TodoItem(todoName: "Essen machen", priority: .dringend, note: "")])
@@ -21,6 +23,7 @@ struct Todolist: View {
     @State private var showAlert: Bool = false
     
     var body: some View {
+        NavigationStack {
             ZStack {
                 List {
                     ForEach(people.indices, id: \.self) { index in
@@ -61,8 +64,14 @@ struct Todolist: View {
                         Image(systemName: "plus.circle")
                     }
                 }
+                
+                ToolbarItem(placement: .topBarLeading) {
+                    Button { dismiss } label: {
+                        Image(systemName: "xmark.circle")
+                    }
+                }
             }
-        
+        }
         .sheet(isPresented: $addSheet) {
             AddTodoSection(people: $people)
 //                .presentationDetents([.fraction(0.6)])
@@ -146,48 +155,6 @@ struct TodoRowView: View {
                     }
                 }
                 .foregroundStyle(item.priority.color)
-                
-
-//                if item.priority == .niedrig {
-//                    Menu(item.priority) { priority in
-//                        ForEach(priority, id: \.self) { prio in
-//                            Button(prio.asString) {
-//                                item.priority = prio.asString
-//                            }
-//                        }
-//                    }
-//                    .foregroundStyle(.green)
-//                    
-//                } else if item.priority == .mittel {
-//                    Menu(item.priority) { priority in
-//                        ForEach(priority, id: \.self) { prio in
-//                            Button(prio.asString) {
-//                                item.priority = prio.asString
-//                            }
-//                        }
-//                    }
-//                    .foregroundStyle(.blue)
-//                    
-//                } else if item.priority == .hoch {
-//                    Menu(item.priority) { priority in
-//                        ForEach(priority, id: \.self) { prio in
-//                            Button(prio.asString) {
-//                                item.priority = prio.asString
-//                            }
-//                        }
-//                    }
-//                    .foregroundStyle(.orange)
-//                    
-//                } else if item.priority == .dringend {
-//                    Menu(item.priority) { priority in
-//                        ForEach(priority, id: \.self) { prio in
-//                            Button(prio.asString) {
-//                                item.priority = prio.asString
-//                            }
-//                        }
-//                    }
-//                    .foregroundStyle(.red)
-//                }
                 
                 Button { editSheet.toggle() } label: {
                     Image(systemName: "info.circle")

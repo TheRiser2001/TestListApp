@@ -10,6 +10,8 @@ import SwiftUI
 
 struct RecipesView: View {
     
+    @Environment(\.dismiss) var dismiss
+    
     //    @State private var recipes: [Recipe] = [
     //        Recipe(name: "Avocado Sandwich", mealtime: .breakfast, ingredient: [], instructions: [], calories: 200, duration: 50, difficulty: .easy, image: "Essensbild", isFavorite: false),
     //        Recipe(name: "Hühnchen mit Nudeln", mealtime: .lunch, ingredient: [Ingredient(name: "Huhn", amount: 1, unit: .anzahl), Ingredient(name: "Reis", amount: 3, unit: .gramm)], instructions: [], calories: 500, duration: 15, difficulty: .hard, image: "Essensbild", isFavorite: true),
@@ -75,6 +77,15 @@ struct RecipesView: View {
                         showAddRecipeView.toggle()
                     }
                     .padding()
+            }
+            
+            .toolbar {
+                ToolbarItem(placement: .topBarLeading) {
+                    Button { dismiss } label: {
+                        Image(systemName: "xmark.circle")
+                            .foregroundStyle(.white)
+                    }
+                }
             }
             .navigationTitle("Rezepte")
             .toolbarBackground(.visible, for: .navigationBar)

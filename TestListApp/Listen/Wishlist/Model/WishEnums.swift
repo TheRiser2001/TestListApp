@@ -9,10 +9,10 @@ import Foundation
 import SwiftUI
 
 enum Priority: Int, CaseIterable {
-    case niedrig
-    case mittel
-    case hoch
-    case dringend
+    case niedrig = 3
+    case mittel = 2
+    case hoch = 1
+    case dringend = 0
     
     var asString: String {
         "\(self)".capitalized
@@ -25,6 +25,10 @@ enum Priority: Int, CaseIterable {
         case .hoch: return .orange
         case .dringend: return .red
         }
+    }
+    
+    var int16Value: Int16 {
+        return Int16(self.rawValue)
     }
 }
 

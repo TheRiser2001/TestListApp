@@ -107,8 +107,3 @@ struct SingleCategory: View {
 #Preview {
     AddCategoryView()
 }
-
-
-#Preview {
-    AddCategoryView()
-}

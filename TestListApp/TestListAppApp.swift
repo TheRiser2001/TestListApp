@@ -15,7 +15,7 @@ struct TestListAppApp: App {
     
     init() {
         do {
-            container = try ModelContainer(for: GroceryCategory.self, GroceryItem.self, Person.self, TodolistItem.self, Recipe.self/*, migrationPlan: DatabaseMigrationPlan.self*/)
+            container = try ModelContainer(for: GroceryCategory.self, GroceryItem.self, Person.self, TodolistItem.self, WishModel.self, Recipe.self/*, migrationPlan: DatabaseMigrationPlan.self*/)
         } catch {
             fatalError("Fehler beim erstellen")
         }

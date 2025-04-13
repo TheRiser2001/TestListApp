@@ -50,24 +50,32 @@ struct MainListView: View {
     var body: some View {
         NavigationStack {
             List {
-//                LazyVGrid(columns: Array(repeating: GridItem(), count: 2)) {
-                    ForEach(liste) { listInfo in
-                        NavigationLink(
-                            destination: destinationView(for: listInfo),
-                            tag: destination(for: listInfo),
-                            selection: $destination
-                        ) {
-                            CardView(listInfo: listInfo)
-                        }
-                        .listRowSeparator(.hidden)
+                //                LazyVGrid(columns: Array(repeating: GridItem(), count: 2)) {
+                //                    ForEach(liste) { listInfo in
+                //                        NavigationLink(
+                //                            destination: destinationView(for: listInfo),
+                //                            tag: destination(for: listInfo),
+                //                            selection: $destination
+                //                        ) {
+                //                            CardView(listInfo: listInfo)
+                //                        }
+                //                        .listRowSeparator(.hidden)
+                //                    }
+                ForEach(liste) { listInfo in
+                    Button { selectedListe = listInfo } label: {
+                        CardView(listInfo: listInfo)
                     }
-                    .onDelete { indices in
-                        liste.remove(atOffsets: indices)
+                    .fullScreenCover(item: $selectedListe) { listInfo in
+                        destinationView(for: listInfo)
                     }
-                    .onMove { indices, newOffset in
-                        liste.move(fromOffsets: indices, toOffset: newOffset)
-                    }
-//                }
+                }
+                .onDelete { indices in
+                    liste.remove(atOffsets: indices)
+                }
+                .onMove { indices, newOffset in
+                    liste.move(fromOffsets: indices, toOffset: newOffset)
+                }
+                //                }
             }
             .navigationTitle("Listen")
             //MARK: AddView ist daweil auskommentiert
@@ -76,7 +84,7 @@ struct MainListView: View {
             //                    .presentationDetents([.fraction(0.8)])
             //            })
         }
-        .tint(.black)
+//        .tint(.black)
         
         .listStyle(.plain)
 //        .onChange(of: backgroundColor) { _, newValue in

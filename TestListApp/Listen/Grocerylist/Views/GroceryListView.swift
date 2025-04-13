@@ -119,6 +119,20 @@ struct GroceryListView: View {
                         }
                     }
                 }
+                
+                ToolbarItem(placement: .topBarLeading) {
+                Button {
+                    dismiss()
+                } label: {
+                    Text("X")
+                    .foregroundStyle(Color.white)
+                    .padding(8)
+                    .background {
+                        Circle()
+                            .tint(Color.black.opacity(0.4))
+                    }
+                }
+                }
             }
             .navigationTitle("Einkaufsliste")
             .toolbarBackground(.visible, for: .navigationBar)

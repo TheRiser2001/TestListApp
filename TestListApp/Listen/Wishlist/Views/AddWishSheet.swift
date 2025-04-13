@@ -12,18 +12,19 @@ struct AddWishSheet: View {
     @State private var titleTextField: String = ""
     @State private var costTextField: String = ""
     @State private var notes: String = ""
+    
     @State private var cost: Double = 100
     @State private var saved: Double = 0
     private var gaugePercent: Double { (saved/cost) }
     
     @State private var alert: Bool = false
     @State private var toggleSaved: Bool = false
+    
     @State private var prioPicker: Priority = .niedrig
     @State private var wishDate: Date = .now
     
-    @Binding var wishes: [WishModel]
-    
     @Environment(\.dismiss) var dismiss
+    @Environment(\.modelContext) var context
     
     var body: some View {
         NavigationStack {
@@ -56,7 +57,7 @@ struct AddWishSheet: View {
 //                                .font(.footnote)
 //                        }
 //                        Spacer()
-//                        
+//
 //                        Gauge(value: gaugeProzent) {
 //                            Text("\(String(format: "%.0f", gaugeProzent * 100))%")
 //                        }
@@ -103,7 +104,7 @@ struct AddWishSheet: View {
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button("Save") {
-                        addWunsch()
+                        addWish()
                     }
                 }
                 
@@ -119,13 +120,13 @@ struct AddWishSheet: View {
         }
     }
     
-    func addWunsch() {
+    func addWish() {
         guard titleTextField != "" else {
             alert.toggle()
             return
         }
         let newWish = WishModel(name: titleTextField, priority: prioPicker, date: .now, cost: cost, saved: saved)
-        wishes.append(newWish)
+        context.insert(newWish)
         dismiss()
     }
 }
@@ -198,5 +199,5 @@ struct PriceView: View {
 }
 
 #Preview {
-    AddWishSheet(wishes: .constant([WishModel(name: "Test", priority: .mittel, date: .now, cost: 0.0)]))
+    AddWishSheet()
  }

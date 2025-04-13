@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct EditWishSheet: View {
     
@@ -13,27 +14,29 @@ struct EditWishSheet: View {
     
     @State private var testToggle: Bool = false
     @State private var showAlert: Bool = false
-    @State private var editView: Bool = true
+    @State private var edit: Bool = false
     
-    @Binding var wish: WishModel
-    @Binding var wishes: [WishModel]
+    @ObservedObject var wish: WishModel
+    
+    var deleteWish: () -> Void
     
     var body: some View {
-        if editView {
-            EditViewOn(showAlert: $showAlert, editView: $editView, wish: $wish, wishes: $wishes)
+        if edit {
+            EditOn(showAlert: $showAlert, edit: $edit, wish: wish, deleteWish: deleteWish)
         } else {
-            EditViewOff(showAlert: $showAlert, editView: $editView, wish: $wish)
+            EditOff(showAlert: $showAlert, edit: $edit, wish: wish)
         }
     }
 }
 
-struct EditViewOff: View {
+struct EditOff: View {
     
     @Environment(\.dismiss) var dismiss
     
     @Binding var showAlert: Bool
-    @Binding var editView: Bool
-    @Binding var wish: WishModel
+    @Binding var edit: Bool
+    
+    @ObservedObject var wish: WishModel
     
     private let dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
@@ -90,7 +93,7 @@ struct EditViewOff: View {
                     .gaugeStyle(.accessoryCircularCapacity)
                     .tint(wish.priority.color)
                     
-                    //MARK: Muss dann nach wunsch.gaugeProzent angepasst werden
+                    //MARK: Muss dann nach wunsch.gaugePercent angepasst werden
 //                    .gesture(
 //                        DragGesture()
 //                            .onEnded { gesture in
@@ -148,7 +151,7 @@ struct EditViewOff: View {
             ToolbarItem(placement: .topBarTrailing) {
                 Button("Bearbeiten") {
                     withAnimation {
-                        editView.toggle()
+                        edit.toggle()
                     }
                 }
             }
@@ -181,17 +184,19 @@ struct EditViewOff: View {
     }
 }
 
-struct EditViewOn: View {
+struct EditOn: View {
     
     @Environment(\.dismiss) var dismiss
     
-    @State private var toggleSaved: Bool = false
+//    @State private var toggleSaved: Bool = false
     @State private var alertDelete: Bool = false
     
     @Binding var showAlert: Bool
-    @Binding var editView: Bool
-    @Binding var wish: WishModel
-    @Binding var wishes: [WishModel]
+    @Binding var edit: Bool
+    
+    @ObservedObject var wish: WishModel
+    
+    var deleteWish: () -> Void
     
     var body: some View {
         Form {
@@ -250,7 +255,7 @@ struct EditViewOn: View {
             ToolbarItem(placement: .topBarTrailing) {
                 Button("Fertig") {
                     withAnimation {
-                        editView = false
+                        edit = false
                     }
                 }
             }
@@ -258,7 +263,7 @@ struct EditViewOn: View {
         .alert("Artikel löschen?", isPresented: $alertDelete) {
             Button("Nein", role: .cancel) {}
             Button("Ja", role: .destructive) {
-                delete()
+                deleteWish()
                 dismiss()
             }
         } message: {
@@ -267,13 +272,13 @@ struct EditViewOn: View {
     }
     
     //    $0.id == wunsch.id --> Finde das erste Element im Array "wuensche", dessen "id" mit der "id" des aktuellen wunsch übereinstimmt
-    private func delete() {
-        if let index = wishes.firstIndex(where: { $0.id == wish.id }) {
-            wishes.remove(at: index)
-        }
-    }
+//    private func delete() {
+//        if let index = wuensche.firstIndex(where: { $0.id == wunsch.id }) {
+//            wuensche.remove(at: index)
+//        }
+//    }
 }
 
-#Preview {
-    EditWishSheet(wish: .constant(WishModel(name: "iPad Pro 11''", priority: .dringend, date: Date(), cost: 1400)), wishes: .constant([WishModel(name: "", priority: .niedrig, date: .now, cost: 0.0)]))
-}
+//#Preview {
+//    EditWishSheet(wish: .constant(WishModel(name: "iPad Pro 11''", priority: .dringend, date: Date(), cost: 1400)), wishes: .constant([WishModel(name: "", priority: .niedrig, date: .now, cost: 0.0)]))
+//}
